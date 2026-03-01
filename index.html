@@ -107,16 +107,7 @@ const FileTxtSVG = ({ w = 80, h = 96 }) => (
 );
 
 const FILE_ICONS = { JPG: FileImgSVG, PNG: FileImgSVG, PDF: FilePdfSVG, TXT: FileTxtSVG, DWG: FileTxtSVG };
-const GITHUB_BASE = "https://raw.githubusercontent.com/kselaven-del/portfolio-architecture/main/";
-const IMAGE_EXTS = ["JPG", "PNG", "JPEG"];
-const IMAGE_DATA = new Proxy({}, {
-  get: (_, name) => {
-    if (typeof name !== "string") return undefined;
-    const ext = name.split(".").pop().toUpperCase();
-    if (IMAGE_EXTS.includes(ext)) return GITHUB_BASE + encodeURIComponent(name);
-    return undefined;
-  }
-});
+const IMAGE_DATA = {};
 const FileIcon = ({ ext, w, h }) => { const C = FILE_ICONS[ext] || FileTxtSVG; return <C w={w} h={h} />; };
 
 // ── JSX SOURCE SNIPPETS ───────────────────────────────────────
@@ -466,16 +457,15 @@ const BtnExpand = ({ onClick }) => (
 // ── DATA ─────────────────────────────────────────────────────
 const FOLDERS = {
   architecture:{ label:"ARCHITECTURE", sub:[
-    {name:"10 — ILOT K", id:"ilotk"},
-    {name:"09 — SUPERSTUDIO", id:"superstudio"},
-    {name:"A08 — FONDAZIONE BERRIO", id:"a08"},
-    {name:"A07 — LE MERAVIGLIE", id:"meraviglie"},
-    {name:"A06 — STAGE DMA", id:"stagedma"},
-    {name:"A05 — UN GRAND ESPACE", id:"grandespace"},
-    {name:"A04 — MAISON DUPONT", id:"a04"},
-    {name:"A03 — PAVILLON LACUSTRE", id:"a03"},
-    {name:"A02 — CENTRE CIVIQUE", id:"a02"},
-    {name:"A01 — RESIDENCE COLLINAIRE", id:"a01"},
+    {name:"AR00 — INTERIOR MODELS", id:"ar00"},
+    {name:"AR02 — THE REAL BOOK", id:"ar02"},
+    {name:"AR09 — BURTIGNY", id:"ar09"},
+    {name:"AR10 — STAGE DMA", id:"ar10"},
+    {name:"AR11 — AFTER THE APOCALYPSE", id:"ar11"},
+    {name:"AR12 — CONSTRUCTING THE VIEW", id:"ar12"},
+    {name:"AR13 — MAGMA ET PRINCIPES", id:"ar13"},
+    {name:"AR14 — FONDAZIONE BERIO", id:"ar14"},
+    {name:"AR15 — SUPERSTUDIO", id:"ar15"},
   ]},
   graphicdesign:{ label:"GRAPHIC DESIGN", sub:[
     {name:"GD01 — BRANDING", id:"gd01"}, {name:"GD02 — EDITORIAL", id:"gd02"},
@@ -491,59 +481,106 @@ const FOLDERS = {
 };
 
 const PROJECTS = {
-  a08:{ label:"A08 FONDAZIONE BERRIO", files:[
-    {name:"A08.Parc.JPG", ext:"JPG"}, {name:"A08.Rez-mineur.JPG", ext:"JPG"},
-    {name:"A08.Rez-majeur.JPG", ext:"JPG"}, {name:"A08.Atrium.JPG", ext:"JPG"},
-    {name:"A08.Archives.JPG", ext:"JPG"}, {name:"A08.Archives.PDF", ext:"PDF"},
-    {name:"A08.Production.PDF", ext:"PDF"}, {name:"A08.Plans.DWG", ext:"DWG"},
-    {name:"A08.Notes.TXT", ext:"TXT"},
+  ar00:{ label:"AR00 — INTERIOR MODELS", files:[
+    {name:"BUR.Interior.pdf", ext:"PDF"},
+    {name:"IM.Karl-Marx Hof.pdf", ext:"PDF"},
+    {name:"IM.Wooden hall.jpg", ext:"JPG"},
   ]},
-  a04:{ label:"A04 — MAISON DUPONT", files:[
-    {name:"A04.Facade-Nord.JPG", ext:"JPG"}, {name:"A04.Facade-Sud.JPG", ext:"JPG"},
-    {name:"A04.Plan-RDC.JPG", ext:"JPG"}, {name:"A04.Plan-R1.JPG", ext:"JPG"},
-    {name:"A04.Coupe-AA.JPG", ext:"JPG"}, {name:"A04.Coupe-BB.JPG", ext:"JPG"},
-    {name:"A04.Detail-Fenetre.JPG", ext:"JPG"}, {name:"A04.Detail-Toiture.JPG", ext:"JPG"},
-    {name:"A04.Rapport.PDF", ext:"PDF"}, {name:"A04.Plans.DWG", ext:"DWG"},
-    {name:"A04.Notes.TXT", ext:"TXT"},
+  ar02:{ label:"AR02 — THE REAL BOOK", files:[
+    {name:"TRB_1.jpg", ext:"JPG"},
+    {name:"TRB_2.jpg", ext:"JPG"},
+    {name:"TRB_3.jpg", ext:"JPG"},
   ]},
-  a03:{ label:"A03 — PAVILLON LACUSTRE", files:[
-    {name:"A03.Vue-Lac.JPG", ext:"JPG"}, {name:"A03.Vue-Terrasse.JPG", ext:"JPG"},
-    {name:"A03.Plan-Masse.JPG", ext:"JPG"}, {name:"A03.Plan-RDC.JPG", ext:"JPG"},
-    {name:"A03.Coupe.JPG", ext:"JPG"}, {name:"A03.Axonometrie.JPG", ext:"JPG"},
-    {name:"A03.Permis.PDF", ext:"PDF"}, {name:"A03.Plans.DWG", ext:"DWG"},
-    {name:"A03.Budget.PDF", ext:"PDF"}, {name:"A03.Notes.TXT", ext:"TXT"},
+  ar09:{ label:"AR09 — BURTIGNY", files:[
+    {name:"BUR.Constructive section.pdf", ext:"PDF"},
+    {name:"BUR.Elevation-2.png", ext:"PNG"},
+    {name:"BUR.Elevations-1.png", ext:"PNG"},
+    {name:"BUR.Interior.pdf", ext:"PDF"},
+    {name:"BUR.Plan-F1.pdf", ext:"PDF"},
+    {name:"BUR.Plan-F2.pdf", ext:"PDF"},
+    {name:"BUR.Plan-GF.pdf", ext:"PDF"},
+    {name:"BUR.Section-1.pdf", ext:"PDF"},
+    {name:"BUR.Section-2.pdf", ext:"PDF"},
   ]},
-  a02:{ label:"A02 — CENTRE CIVIQUE", files:[
-    {name:"A02.Perspective.JPG", ext:"JPG"}, {name:"A02.Facade-Principale.JPG", ext:"JPG"},
-    {name:"A02.Facade-Laterale.JPG", ext:"JPG"}, {name:"A02.Plan-SS.JPG", ext:"JPG"},
-    {name:"A02.Plan-RDC.JPG", ext:"JPG"}, {name:"A02.Plan-R1.JPG", ext:"JPG"},
-    {name:"A02.Plan-R2.JPG", ext:"JPG"}, {name:"A02.Coupe-Long.JPG", ext:"JPG"},
-    {name:"A02.Coupe-Trans.JPG", ext:"JPG"}, {name:"A02.Detail-Structure.JPG", ext:"JPG"},
-    {name:"A02.Concours.PDF", ext:"PDF"}, {name:"A02.Plans.DWG", ext:"DWG"},
-    {name:"A02.Descriptif.TXT", ext:"TXT"},
+  ar10:{ label:"AR10 — STAGE DMA", files:[
+    {name:"DMA.Corbeil.Elevation.png", ext:"PNG"},
+    {name:"DMA.Corbeil.Model.png", ext:"PNG"},
+    {name:"DMA.Corbeil.Plan-F1.png", ext:"PNG"},
+    {name:"DMA.Corbeil.Plan-F2.png", ext:"PNG"},
+    {name:"DMA.Savigny.Collage-1.png", ext:"PNG"},
+    {name:"DMA.Savigny.Collage-2.png", ext:"PNG"},
+    {name:"LAMOUR.png", ext:"PNG"},
   ]},
-  a01:{ label:"A01 — RESIDENCE COLLINAIRE", files:[
-    {name:"A01.Maquette.JPG", ext:"JPG"}, {name:"A01.Vue-Entree.JPG", ext:"JPG"},
-    {name:"A01.Vue-Jardin.JPG", ext:"JPG"}, {name:"A01.Plan-Sous-Sol.JPG", ext:"JPG"},
-    {name:"A01.Plan-RDC.JPG", ext:"JPG"}, {name:"A01.Plan-Combles.JPG", ext:"JPG"},
-    {name:"A01.Coupe-AA.JPG", ext:"JPG"}, {name:"A01.Elevation-Nord.JPG", ext:"JPG"},
-    {name:"A01.Elevation-Sud.JPG", ext:"JPG"}, {name:"A01.Detail-Facade.JPG", ext:"JPG"},
-    {name:"A01.Detail-Escalier.JPG", ext:"JPG"}, {name:"A01.Plans-Final.DWG", ext:"DWG"},
-    {name:"A01.Rapport-Final.PDF", ext:"PDF"}, {name:"A01.Notes.TXT", ext:"TXT"},
+  ar11:{ label:"AR11 — AFTER THE APOCALYPSE", files:[
+    {name:"ATA.Handdrawing-1.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-2.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-3.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-4.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-5.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-6.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-7.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-8.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-9.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-10.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-11.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-12.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-13.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-14.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-15.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-16.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-17.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-18.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-19.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-20.png", ext:"PNG"},
+    {name:"ATA.Model.cc.jpg", ext:"JPG"},
+    {name:"ATA.Model.png", ext:"PNG"},
+    {name:"ATA.Site-Plan.jpg", ext:"JPG"},
+    {name:"ATA.Site-Plan.png", ext:"PNG"},
+    {name:"ATA.Site-Section.png", ext:"PNG"},
   ]},
-  ilotk:{ label:"10 — ILOT K", files:[
-    {name:"IK.Perspective.JPG", ext:"JPG"}, {name:"IK.Vue-Rue.JPG", ext:"JPG"},
-    {name:"IK.Vue-Cour.JPG", ext:"JPG"}, {name:"IK.Plan-Masse.JPG", ext:"JPG"},
-    {name:"IK.Plan-RDC.JPG", ext:"JPG"}, {name:"IK.Plan-R1.JPG", ext:"JPG"},
-    {name:"IK.Plan-R2.JPG", ext:"JPG"}, {name:"IK.Coupe-AA.JPG", ext:"JPG"},
-    {name:"IK.Coupe-BB.JPG", ext:"JPG"}, {name:"IK.Elevation.JPG", ext:"JPG"},
-    {name:"IK.Detail-Facade.JPG", ext:"JPG"}, {name:"IK.Plans.DWG", ext:"DWG"},
-    {name:"IK.Rapport.PDF", ext:"PDF"},
+  ar12:{ label:"AR12 — CONSTRUCTING THE VIEW", files:[
+    {name:"CTV.C4D-Render-1.jpg", ext:"JPG"},
+    {name:"CTV.C4D-Render-1.png", ext:"PNG"},
+    {name:"CTV.C4D-Render-2.jpg", ext:"JPG"},
+    {name:"CTV.C4D-Render-2.png", ext:"PNG"},
+    {name:"CTV.Cut-up-1.jpg", ext:"JPG"},
+    {name:"CTV.Cut-up-2.jpg", ext:"JPG"},
+    {name:"CTV.Montage-1.jpg", ext:"JPG"},
+    {name:"CTV.Montage-2.jpg", ext:"JPG"},
+    {name:"CTV.Montage-3.jpg", ext:"JPG"},
+    {name:"CTV.Montage-4.jpg", ext:"JPG"},
+  ]},
+  ar13:{ label:"AR13 — MAGMA ET PRINCIPES", files:[
+    {name:"MEP.Axon.Casa-Molino.pdf", ext:"PDF"},
+    {name:"MEP.Axon.Film.pdf", ext:"PDF"},
+    {name:"MEP.Detail.Casa-Molino.pdf", ext:"PDF"},
+    {name:"MEP.Detail.Film.pdf", ext:"PDF"},
+    {name:"MEP.Interior-model-1.jpg", ext:"JPG"},
+    {name:"MEP.Interior-model-2.jpg", ext:"JPG"},
+  ]},
+  ar14:{ label:"AR14 — FONDAZIONE BERIO", files:[
+    {name:"FDB.Collage.Archives.jpg", ext:"JPG"},
+    {name:"FDB.Collage.Atrium-1.cc.jpg", ext:"JPG"},
+    {name:"FDB.Collage.Atrium-1.png", ext:"PNG"},
+    {name:"FDB.Collage.Atrium-2.cc.jpeg", ext:"JPG"},
+    {name:"FDB.Collage.Atrium-2.jpg", ext:"JPG"},
+    {name:"FDB.Collage.Lab.jpg", ext:"JPG"},
+    {name:"FDB.Collage.Parc.jpg", ext:"JPG"},
+    {name:"FDB.Collage.Place.cc.jpeg", ext:"JPG"},
+    {name:"FDB.Collage.Place.jpg", ext:"JPG"},
+    {name:"FDB.Model..png", ext:"PNG"},
+    {name:"FDB.Model.cc.jpg", ext:"JPG"},
+    {name:"FDB.Plan-1.pdf", ext:"PDF"},
+    {name:"FDB.Plan-2.pdf", ext:"PDF"},
+    {name:"FDB.Section.pdf", ext:"PDF"},
+  ]},
+  ar15:{ label:"AR15 — SUPERSTUDIO", files:[
+    {name:"SPS.Analogous-map.pdf", ext:"PDF"},
+    {name:"SPS.Index.pdf", ext:"PDF"},
   ]},
   _def:{ label:"Projet", files:[
     {name:"Plan.JPG", ext:"JPG"}, {name:"Facade.JPG", ext:"JPG"},
     {name:"Coupe.JPG", ext:"JPG"}, {name:"Site.PDF", ext:"PDF"},
-    {name:"Detail.DWG", ext:"DWG"}, {name:"Notes.TXT", ext:"TXT"},
   ]},
 };
 const getProj = id => PROJECTS[id] || PROJECTS._def;
