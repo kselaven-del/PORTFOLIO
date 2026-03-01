@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>La Slack — Portfolio</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *:focus, *:active { outline: none !important; -webkit-tap-highlight-color: transparent; }
+    html, body, #root { height: 100%; margin: 0; padding: 0; }
+    .win-scroll::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect, useCallback } = React;
+
+// ── SVG COMPONENTS ────────────────────────────────────────────
+const FolderSVG = ({ w = 600, h = 461, sw = 0.4 }) => (
+  <svg width={w} height={h} viewBox="244 295 511 393" overflow="visible" style={{ display: "block" }}>
+    <defs>
+      <filter id="f-folder" x="230" y="295" width="545" height="415" filterUnits="userSpaceOnUse">
+        <feOffset dx="4" dy="4"/>
+        <feGaussianBlur stdDeviation="0" result="blur"/>
+        <feFlood floodColor="#a21c26" floodOpacity=".10"/>
+        <feComposite in2="blur" operator="in"/>
+        <feComposite in="SourceGraphic"/>
+      </filter>
+    </defs>
+    <path style={{ fill:"#fff", filter:"url(#f-folder)", stroke:"#a21c26", strokeWidth:sw, strokeMiterlimit:10 }}
+      d="M444.84,345.18l-34.51-31.59c-3.4-2.63-7.58-4.06-11.87-4.06h-104.06c-4.3,0-8.48,1.43-11.87,4.06l-30.49,29.84c-4.74,3.67-7.51,9.33-7.51,15.32v312.36c0,10.7,8.68,19.38,19.38,19.38h472.19c10.7,0,19.38-8.68,19.38-19.38v-302.47c0-10.7-8.68-19.38-19.38-19.38h-279.38c-4.3,0-8.48-1.43-11.87-4.06Z"/>
+  </svg>
+);
+
+const DumpSVG = ({ w = 175, h = 230, sw = 0.4 }) => (
+  <svg width={w} height={h} viewBox="370 330 265 320" overflow="visible" style={{ display: "block" }}>
+    <defs>
+      <filter id="f-dump" x="365" y="328" width="278" height="352" filterUnits="userSpaceOnUse">
+        <feOffset dx="4" dy="4"/>
+        <feGaussianBlur stdDeviation="0" result="blur"/>
+        <feFlood floodColor="#a21c26" floodOpacity=".10"/>
+        <feComposite in2="blur" operator="in"/>
+        <feComposite in="SourceGraphic"/>
+      </filter>
+    </defs>
+    <path style={{ fill:"#fff", filter:"url(#f-dump)", stroke:"#a21c26", strokeWidth:sw, strokeMiterlimit:10 }}
+      d="M621.22,366.77c0-5.48-4.44-9.91-9.91-9.91h-66.57l-16.03-16.52h-58.61l-16.52,16.52h-64.88c-5.48,0-9.91,4.44-9.91,9.91v28.83h9.19v252.16c0,6.58,5.33,11.91,11.91,11.91h199.14c6.58,0,11.91-5.33,11.91-11.91v-252.16h10.3v-28.83Z"/>
+  </svg>
+);
+
+const FileImgSVG = ({ w = 80, h = 96 }) => (
+  <svg width={w} height={h} viewBox="330 295 340 410" overflow="visible" style={{ display: "block" }}>
+    <defs>
+      <filter id="f-fimg" x="328" y="295" width="348" height="415" filterUnits="userSpaceOnUse">
+        <feOffset dx="4" dy="4"/><feGaussianBlur stdDeviation="0" result="blur"/>
+        <feFlood floodColor="#a21c26" floodOpacity=".10"/><feComposite in2="blur" operator="in"/><feComposite in="SourceGraphic"/>
+      </filter>
+    </defs>
+    <polygon style={{ fill:"#fff", filter:"url(#f-fimg)", stroke:"#a21c26", strokeWidth:1, strokeMiterlimit:10 }} points="657.8 385.67 657.8 691.16 342.2 691.16 342.2 308.84 580.61 308.84 657.8 385.67"/>
+    <rect style={{ fill:"#fff", stroke:"#a21c26", strokeWidth:1, strokeMiterlimit:10 }} x="389.98" y="451.3" width="220.05" height="173.02"/>
+    <circle style={{ fill:"#fff", stroke:"#a21c26", strokeWidth:1, strokeMiterlimit:10 }} cx="545.12" cy="504.38" r="14.79"/>
+    <polyline style={{ fill:"none", stroke:"#a21c26", strokeWidth:1, strokeMiterlimit:10 }} points="389.98 601.29 465.97 525.31 545.12 604.46"/>
+    <polyline style={{ fill:"none", stroke:"#a21c26", strokeWidth:1, strokeMiterlimit:10 }} points="530.67 590.01 570.27 550.4 610.02 590.15"/>
+    <polyline style={{ fill:"none", stroke:"#a21c26", strokeWidth:1, strokeMiterlimit:10 }} points="580.61 308.84 580.61 385.67 657.8 385.67"/>
+  </svg>
+);
+
+const FilePdfSVG = ({ w = 80, h = 96 }) => (
+  <svg width={w} height={h} viewBox="330 295 340 410" overflow="visible" style={{ display: "block" }}>
+    <defs>
+      <filter id="f-fpdf" x="328" y="295" width="348" height="415" filterUnits="userSpaceOnUse">
+        <feOffset dx="4" dy="4"/><feGaussianBlur stdDeviation="0" result="blur"/>
+        <feFlood floodColor="#a21c26" floodOpacity=".10"/><feComposite in2="blur" operator="in"/><feComposite in="SourceGraphic"/>
+      </filter>
+    </defs>
+    <g style={{ filter:"url(#f-fpdf)" }}>
+      <polygon style={{ fill:"#fff", stroke:"#a21c26", strokeWidth:1, strokeMiterlimit:10 }} points="657.8 385.67 657.8 691.16 342.2 691.16 342.2 308.84 580.61 308.84 657.8 385.67"/>
+      <polyline style={{ fill:"none", stroke:"#a21c26", strokeWidth:1 }} points="580.61 308.84 580.61 385.67 657.8 385.67"/>
+    </g>
+    {[[439.19,591.22],[500,591.22],[560.81,591.22],[439.19,469.59],[500,469.59],[560.81,469.59],[378.38,469.59],[378.38,530.41],[378.38,591.22],[439.19,530.41],[500,530.41],[560.81,530.41]].map(([cx,cy],i)=>(
+      <circle key={i} cx={cx} cy={cy} r="2.18" fill="#a21c26"/>
+    ))}
+    <circle style={{ fill:"#fff", stroke:"#a21c26", strokeWidth:1 }} cx="582.34" cy="585.32" r="48.48"/>
+    <rect style={{ fill:"#fff", stroke:"#a21c26", strokeWidth:1 }} x="448.64" y="415.83" width="68.99" height="98.38"/>
+  </svg>
+);
+
+const FileTxtSVG = ({ w = 80, h = 96 }) => (
+  <svg width={w} height={h} viewBox="330 295 340 410" overflow="visible" style={{ display: "block" }}>
+    <defs>
+      <filter id="f-ftxt" x="328" y="295" width="348" height="415" filterUnits="userSpaceOnUse">
+        <feOffset dx="4" dy="4"/><feGaussianBlur stdDeviation="0" result="blur"/>
+        <feFlood floodColor="#a21c26" floodOpacity=".10"/><feComposite in2="blur" operator="in"/><feComposite in="SourceGraphic"/>
+      </filter>
+    </defs>
+    <polygon style={{ fill:"#fff", filter:"url(#f-ftxt)", stroke:"#a21c26", strokeWidth:1, strokeMiterlimit:10 }} points="657.8 385.67 657.8 691.16 342.2 691.16 342.2 308.84 580.61 308.84 657.8 385.67"/>
+    {[466.18,498.46,530.74,563.02,595.31].map((y,i)=>(
+      <line key={i} style={{ stroke:"#a21c26", strokeWidth:1 }} x1="399.28" y1={y} x2="600.72" y2={y}/>
+    ))}
+    <line style={{ stroke:"#a21c26", strokeWidth:1 }} x1="399.28" y1="627.59" x2="523.83" y2="627.59"/>
+    <polyline style={{ fill:"none", stroke:"#a21c26", strokeWidth:1 }} points="580.61 308.84 580.61 385.67 657.8 385.67"/>
+  </svg>
+);
+
+const FILE_ICONS = { JPG: FileImgSVG, PNG: FileImgSVG, PDF: FilePdfSVG, TXT: FileTxtSVG, DWG: FileTxtSVG };
+const IMAGE_DATA = {};
+const FileIcon = ({ ext, w, h }) => { const C = FILE_ICONS[ext] || FileTxtSVG; return <C w={w} h={h} />; };
+
+// ── JSX SOURCE SNIPPETS ───────────────────────────────────────
+const JSX_CONTENT = {
+  "IK.Perspective.JPG": `// IK.Perspective.JPG — Vue perspective
+// Îlot K — Projet 10
+
+export const IKPerspective = () => (
+  <section className="perspective-view">
+    <figure>
+      <img
+        src="/images/ik-perspective.jpg"
+        alt="Îlot K — vue perspective"
+      />
+      <figcaption>
+        Vue perspective générale, angle nord-ouest
+      </figcaption>
+    </figure>
+  </section>
+);`,
+  "IK.Vue-Rue.JPG": `// IK.Vue-Rue.JPG — Vue depuis la rue
+// Îlot K — Projet 10
+
+export const IKVueRue = () => (
+  <section className="street-view">
+    <div className="elevation-wrapper">
+      <img
+        src="/renders/ik-rue.jpg"
+        alt="Îlot K — façade rue"
+        className="elevation-img"
+      />
+    </div>
+    <aside className="annotations">
+      <span>R+4 · REZ-DE-CHAUSSÉE COMMERCIAL</span>
+      <span>LOGEMENTS COLLECTIFS · 24 UNITÉS</span>
+    </aside>
+  </section>
+);`,
+  "IK.Plan-Masse.JPG": `// IK.Plan-Masse.JPG — Plan de masse
+// Îlot K — Projet 10
+
+export const IKPlanMasse = () => (
+  <div className="plan-masse">
+    <header>
+      <h2>PLAN DE MASSE</h2>
+      <span>Échelle 1:500</span>
+    </header>
+    <div className="drawing-area">
+      <img src="/plans/ik-masse.jpg" alt="Plan de masse" />
+    </div>
+    <footer>
+      <dl>
+        <dt>Emprise au sol</dt><dd>1 240 m²</dd>
+        <dt>SHON</dt><dd>6 800 m²</dd>
+        <dt>COS</dt><dd>2.8</dd>
+      </dl>
+    </footer>
+  </div>
+);`,
+  "IK.Plan-RDC.JPG": `// IK.Plan-RDC.JPG — Plan rez-de-chaussée
+// Îlot K — Projet 10
+
+const SPACES = [
+  { id: "R01", label: "Hall d'entrée", area: 48 },
+  { id: "R02", label: "Local vélos",   area: 22 },
+  { id: "R03", label: "Commerce A",    area: 180 },
+  { id: "R04", label: "Commerce B",    area: 94 },
+  { id: "R05", label: "Loge gardien",  area: 18 },
+];
+
+export const IKPlanRDC = () => (
+  <div className="floor-plan">
+    <h3>REZ-DE-CHAUSSÉE</h3>
+    <img src="/plans/ik-rdc.jpg" alt="Plan RDC" />
+    <table className="legend">
+      <tbody>
+        {SPACES.map(s => (
+          <tr key={s.id}>
+            <td>{s.id}</td>
+            <td>{s.label}</td>
+            <td>{s.area} m²</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);`,
+  "IK.Rapport.PDF": `// IK.Rapport.PDF — Notice descriptive
+// Îlot K — Projet 10
+
+export const IKRapport = () => (
+  <article className="report">
+    <header>
+      <h1>ÎLOT K — NOTICE DESCRIPTIVE</h1>
+      <time dateTime="2024-03">Mars 2024</time>
+    </header>
+
+    <section>
+      <h2>1. Implantation</h2>
+      <p>
+        Le projet s'inscrit dans la continuité du
+        tissu urbain existant, en respectant les
+        alignements et hauteurs réglementaires.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. Programme</h2>
+      <ul>
+        <li>24 logements collectifs</li>
+        <li>274 m² de commerces en RDC</li>
+        <li>12 places de stationnement en SS</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>3. Matériaux</h2>
+      <p>
+        Façades en béton architectonique teinté,
+        menuiseries aluminium laqué RAL 7016.
+      </p>
+    </section>
+  </article>
+);`,
+  "IK.Plans.DWG": `// IK.Plans.DWG — Données CAO
+// Îlot K — Projet 10
+
+/**
+ * Fichier AutoCAD — non prévisualisable
+ * Utiliser AutoCAD 2024+ ou DWG TrueView
+ *
+ * Contenu :
+ *   - Plan de masse (1:500)
+ *   - Plans par niveau RDC → R+4 (1:100)
+ *   - Coupes AA et BB (1:100)
+ *   - Élévations N, S, E, O (1:100)
+ *   - Détails façade (1:20)
+ *
+ * Layers principaux :
+ *   STRUCT    → structure porteuse
+ *   FAÇADE    → enveloppe extérieure
+ *   CLOISONS  → parois intérieures
+ *   COTATION  → dimensions
+ *   TEXTES    → annotations
+ */
+
+export const fileInfo = {
+  name: "IK.Plans.DWG",
+  format: "AutoCAD 2024",
+  size: "18.4 MB",
+  lastModified: "2024-03-15",
+  sheets: 14,
+};`,
+};
+
+// Generate default JSX content for files without specific content
+const generateDefaultJsx = (file) => {
+  const compName = file.name
+    .replace(/\.[^/.]+$/, "")
+    .replace(/[^a-zA-Z0-9]/g, "_");
+
+  if (file.ext === "JPG" || file.ext === "PNG") {
+    return `// ${file.name}
+// Fichier image
+
+export const ${compName} = () => (
+  <figure className="project-image">
+    <img
+      src="/images/${file.name.toLowerCase()}"
+      alt="${file.name.replace(/\.[^/.]+$/, "").replace(/\./g, " — ")}"
+    />
+    <figcaption>
+      {/* Légende à compléter */}
+    </figcaption>
+  </figure>
+);`;
+  }
+
+  if (file.ext === "PDF") {
+    return `// ${file.name}
+// Document PDF
+
+/**
+ * Notice / rapport lié au projet
+ * Ouvrir avec Adobe Acrobat ou équivalent
+ */
+
+export const ${compName}Meta = {
+  filename: "${file.name}",
+  type: "PDF",
+  pages: null, // à renseigner
+};`;
+  }
+
+  if (file.ext === "DWG") {
+    return `// ${file.name}
+// Fichier CAO — AutoCAD
+
+/**
+ * Fichier AutoCAD
+ * Utiliser AutoCAD 2020+ ou DWG TrueView
+ *
+ * Layers :
+ *   STRUCT    → structure
+ *   FAÇADE    → enveloppe
+ *   CLOISONS  → parois
+ *   COTATION  → dimensions
+ */
+
+export const ${compName}Info = {
+  filename: "${file.name}",
+  format: "AutoCAD DWG",
+};`;
+  }
+
+  if (file.ext === "TXT") {
+    return `// ${file.name}
+// Notes de projet
+
+/*
+  Notes et annotations de travail.
+  Ce fichier contient les remarques,
+  TODOs et références du projet.
+
+  ─────────────────────────────────
+  TODO :
+  - Vérifier les cotes façade nord
+  - Mettre à jour le budget travaux
+  - Valider avec le bureau de contrôle
+  ─────────────────────────────────
+*/`;
+  }
+
+  return `// ${file.name}\n\nexport default {};\n`;
+};
+
+// ── SYNTAX HIGHLIGHTING (minimal, CSS-based tokens) ──────────
+function highlight(code) {
+  const lines = code.split("\n");
+  return lines.map((line, i) => {
+    // tokenize very simply
+    const parts = [];
+    let rest = line;
+
+    // comment line
+    if (/^\s*(\/\/|\/\*|\*|#)/.test(rest)) {
+      parts.push(<span key="c" style={{ color: "#8a9bb0" }}>{rest}</span>);
+      return (
+        <div key={i} style={{ display: "flex", minHeight: "1.5em" }}>
+          <span style={{ color: "#7a1519", minWidth: 32, textAlign: "right", marginRight: 16, userSelect: "none", flexShrink: 0 }}>{i + 1}</span>
+          <span>{parts}</span>
+        </div>
+      );
+    }
+
+    // Replace keywords, strings, JSX tags etc with colored spans
+    const tokenized = tokenizeLine(rest);
+    return (
+      <div key={i} style={{ display: "flex", minHeight: "1.5em" }}>
+        <span style={{ color: "#7a1519", minWidth: 32, textAlign: "right", marginRight: 16, userSelect: "none", flexShrink: 0 }}>{i + 1}</span>
+        <span style={{ flex: 1 }}>{tokenized}</span>
+      </div>
+    );
+  });
+}
+
+function tokenizeLine(line) {
+  // Simple regex-based tokenizer
+  const tokens = [];
+  const regex = /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\b(?:export|import|const|let|var|return|default|from|function|class|extends|new|if|else|for|of|in|null|true|false|undefined|async|await|=>)\b)|(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(<\/?[A-Z][a-zA-Z]*|<\/?[a-z]+)|([A-Z][a-zA-Z]*(?=\s*[\(=]))|(\{|\}|\(|\)|\[|\]|;|,)/g;
+
+  let lastIndex = 0;
+  let m;
+  while ((m = regex.exec(line)) !== null) {
+    if (m.index > lastIndex) {
+      tokens.push(<span key={lastIndex}>{line.slice(lastIndex, m.index)}</span>);
+    }
+    const [full, str, kw, inlineComment, blockComment, tag, component, punct] = m;
+    if (str) tokens.push(<span key={m.index} style={{ color: "#7fa87f" }}>{full}</span>);
+    else if (kw) tokens.push(<span key={m.index} style={{ color: "#c792ea" }}>{full}</span>);
+    else if (inlineComment || blockComment) tokens.push(<span key={m.index} style={{ color: "#8a9bb0" }}>{full}</span>);
+    else if (tag) tokens.push(<span key={m.index} style={{ color: "#89ddff" }}>{full}</span>);
+    else if (component) tokens.push(<span key={m.index} style={{ color: "#ffcb6b" }}>{full}</span>);
+    else if (punct) tokens.push(<span key={m.index} style={{ color: "#89ddff" }}>{full}</span>);
+    else tokens.push(<span key={m.index}>{full}</span>);
+    lastIndex = m.index + full.length;
+  }
+  if (lastIndex < line.length) tokens.push(<span key={lastIndex}>{line.slice(lastIndex)}</span>);
+  return tokens;
+}
+
+// ── JSX VIEWER CONTENT ────────────────────────────────────────
+function JsxViewerContent({ file }) {
+  const code = JSX_CONTENT[file.name] || generateDefaultJsx(file);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  };
+
+  return (
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#0d1117", position: "relative" }}>
+      {/* toolbar */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 14px", background: "#161b22", borderBottom: "1px solid #21262d", flexShrink: 0 }}>
+        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, letterSpacing: 1.5, color: "#6e7681", textTransform: "uppercase" }}>
+          {file.ext === "JPG" || file.ext === "PNG" ? "JSX" : file.ext === "PDF" ? "JS" : file.ext === "DWG" ? "JS" : "JS"} · {file.name}
+        </span>
+        <button
+          onClick={handleCopy}
+          style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, letterSpacing: 1, color: copied ? "#3fb950" : "#6e7681", background: "none", border: "none", cursor: "pointer", padding: "2px 6px", transition: "color 0.2s" }}
+        >
+          {copied ? "COPIED" : "COPY"}
+        </button>
+      </div>
+      {/* code */}
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "auto", padding: "16px 0", fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, lineHeight: "1.6", color: "#e6edf3", background: "#0d1117" }}>
+        <div style={{ minWidth: "max-content", paddingRight: 24 }}>
+          {highlight(code)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── WINDOW BUTTONS ────────────────────────────────────────────
+const BtnClose = ({ onClick }) => (
+  <div onClick={onClick} style={{ width:22, height:22, cursor:"pointer", flexShrink:0 }}>
+    <svg viewBox="0 0 22 22" width="22" height="22" overflow="visible">
+      <rect x=".5" y=".5" width="21" height="21" fill="#fff" stroke="#a21c26" strokeWidth="1.25"/>
+      <line x1="5.5" y1="16.5" x2="16.5" y2="5.5" stroke="#a21c26" strokeWidth="1.25"/>
+      <line x1="5.5" y1="5.5" x2="16.5" y2="16.5" stroke="#a21c26" strokeWidth="1.25"/>
+    </svg>
+  </div>
+);
+const BtnExpand = ({ onClick }) => (
+  <div onClick={onClick} style={{ width:22, height:22, cursor:"pointer", flexShrink:0 }}>
+    <svg viewBox="0 0 22 22" width="22" height="22" overflow="visible">
+      <rect x=".5" y=".5" width="21" height="21" fill="#fff" stroke="#a21c26" strokeWidth="1.25"/>
+      <rect x="10.5" y=".5" width="11" height="11" fill="#fff" stroke="#a21c26" strokeWidth="1.25"/>
+    </svg>
+  </div>
+);
+
+// ── DATA ─────────────────────────────────────────────────────
+const FOLDERS = {
+  architecture:{ label:"ARCHITECTURE", sub:[
+    {name:"10 — ILOT K", id:"ilotk"},
+    {name:"09 — SUPERSTUDIO", id:"superstudio"},
+    {name:"A08 — FONDAZIONE BERRIO", id:"a08"},
+    {name:"A07 — LE MERAVIGLIE", id:"meraviglie"},
+    {name:"A06 — STAGE DMA", id:"stagedma"},
+    {name:"A05 — UN GRAND ESPACE", id:"grandespace"},
+    {name:"A04 — MAISON DUPONT", id:"a04"},
+    {name:"A03 — PAVILLON LACUSTRE", id:"a03"},
+    {name:"A02 — CENTRE CIVIQUE", id:"a02"},
+    {name:"A01 — RESIDENCE COLLINAIRE", id:"a01"},
+  ]},
+  graphicdesign:{ label:"GRAPHIC DESIGN", sub:[
+    {name:"GD01 — BRANDING", id:"gd01"}, {name:"GD02 — EDITORIAL", id:"gd02"},
+    {name:"GD03 — TYPO", id:"gd03"},     {name:"GD04 — POSTER", id:"gd04"},
+  ]},
+  objects:{ label:"OBJECTS", sub:[
+    {name:"OBJ01 — MOBILIER", id:"obj01"}, {name:"OBJ02 — LUMINAIRES", id:"obj02"},
+    {name:"OBJ03 — PROTOTYPES", id:"obj03"},
+  ]},
+  dump:{ label:"DUMP", sub:[
+    {name:"MISC 01", id:"misc01"}, {name:"MISC 02", id:"misc02"}, {name:"ARCHIVES", id:"archives"},
+  ]},
+};
+
+const PROJECTS = {
+  a08:{ label:"A08 FONDAZIONE BERRIO", files:[
+    {name:"A08.Parc.JPG", ext:"JPG"}, {name:"A08.Rez-mineur.JPG", ext:"JPG"},
+    {name:"A08.Rez-majeur.JPG", ext:"JPG"}, {name:"A08.Atrium.JPG", ext:"JPG"},
+    {name:"A08.Archives.JPG", ext:"JPG"}, {name:"A08.Archives.PDF", ext:"PDF"},
+    {name:"A08.Production.PDF", ext:"PDF"}, {name:"A08.Plans.DWG", ext:"DWG"},
+    {name:"A08.Notes.TXT", ext:"TXT"},
+  ]},
+  a04:{ label:"A04 — MAISON DUPONT", files:[
+    {name:"A04.Facade-Nord.JPG", ext:"JPG"}, {name:"A04.Facade-Sud.JPG", ext:"JPG"},
+    {name:"A04.Plan-RDC.JPG", ext:"JPG"}, {name:"A04.Plan-R1.JPG", ext:"JPG"},
+    {name:"A04.Coupe-AA.JPG", ext:"JPG"}, {name:"A04.Coupe-BB.JPG", ext:"JPG"},
+    {name:"A04.Detail-Fenetre.JPG", ext:"JPG"}, {name:"A04.Detail-Toiture.JPG", ext:"JPG"},
+    {name:"A04.Rapport.PDF", ext:"PDF"}, {name:"A04.Plans.DWG", ext:"DWG"},
+    {name:"A04.Notes.TXT", ext:"TXT"},
+  ]},
+  a03:{ label:"A03 — PAVILLON LACUSTRE", files:[
+    {name:"A03.Vue-Lac.JPG", ext:"JPG"}, {name:"A03.Vue-Terrasse.JPG", ext:"JPG"},
+    {name:"A03.Plan-Masse.JPG", ext:"JPG"}, {name:"A03.Plan-RDC.JPG", ext:"JPG"},
+    {name:"A03.Coupe.JPG", ext:"JPG"}, {name:"A03.Axonometrie.JPG", ext:"JPG"},
+    {name:"A03.Permis.PDF", ext:"PDF"}, {name:"A03.Plans.DWG", ext:"DWG"},
+    {name:"A03.Budget.PDF", ext:"PDF"}, {name:"A03.Notes.TXT", ext:"TXT"},
+  ]},
+  a02:{ label:"A02 — CENTRE CIVIQUE", files:[
+    {name:"A02.Perspective.JPG", ext:"JPG"}, {name:"A02.Facade-Principale.JPG", ext:"JPG"},
+    {name:"A02.Facade-Laterale.JPG", ext:"JPG"}, {name:"A02.Plan-SS.JPG", ext:"JPG"},
+    {name:"A02.Plan-RDC.JPG", ext:"JPG"}, {name:"A02.Plan-R1.JPG", ext:"JPG"},
+    {name:"A02.Plan-R2.JPG", ext:"JPG"}, {name:"A02.Coupe-Long.JPG", ext:"JPG"},
+    {name:"A02.Coupe-Trans.JPG", ext:"JPG"}, {name:"A02.Detail-Structure.JPG", ext:"JPG"},
+    {name:"A02.Concours.PDF", ext:"PDF"}, {name:"A02.Plans.DWG", ext:"DWG"},
+    {name:"A02.Descriptif.TXT", ext:"TXT"},
+  ]},
+  a01:{ label:"A01 — RESIDENCE COLLINAIRE", files:[
+    {name:"A01.Maquette.JPG", ext:"JPG"}, {name:"A01.Vue-Entree.JPG", ext:"JPG"},
+    {name:"A01.Vue-Jardin.JPG", ext:"JPG"}, {name:"A01.Plan-Sous-Sol.JPG", ext:"JPG"},
+    {name:"A01.Plan-RDC.JPG", ext:"JPG"}, {name:"A01.Plan-Combles.JPG", ext:"JPG"},
+    {name:"A01.Coupe-AA.JPG", ext:"JPG"}, {name:"A01.Elevation-Nord.JPG", ext:"JPG"},
+    {name:"A01.Elevation-Sud.JPG", ext:"JPG"}, {name:"A01.Detail-Facade.JPG", ext:"JPG"},
+    {name:"A01.Detail-Escalier.JPG", ext:"JPG"}, {name:"A01.Plans-Final.DWG", ext:"DWG"},
+    {name:"A01.Rapport-Final.PDF", ext:"PDF"}, {name:"A01.Notes.TXT", ext:"TXT"},
+  ]},
+  ilotk:{ label:"10 — ILOT K", files:[
+    {name:"IK.Perspective.JPG", ext:"JPG"}, {name:"IK.Vue-Rue.JPG", ext:"JPG"},
+    {name:"IK.Vue-Cour.JPG", ext:"JPG"}, {name:"IK.Plan-Masse.JPG", ext:"JPG"},
+    {name:"IK.Plan-RDC.JPG", ext:"JPG"}, {name:"IK.Plan-R1.JPG", ext:"JPG"},
+    {name:"IK.Plan-R2.JPG", ext:"JPG"}, {name:"IK.Coupe-AA.JPG", ext:"JPG"},
+    {name:"IK.Coupe-BB.JPG", ext:"JPG"}, {name:"IK.Elevation.JPG", ext:"JPG"},
+    {name:"IK.Detail-Facade.JPG", ext:"JPG"}, {name:"IK.Plans.DWG", ext:"DWG"},
+    {name:"IK.Rapport.PDF", ext:"PDF"},
+  ]},
+  _def:{ label:"Projet", files:[
+    {name:"Plan.JPG", ext:"JPG"}, {name:"Facade.JPG", ext:"JPG"},
+    {name:"Coupe.JPG", ext:"JPG"}, {name:"Site.PDF", ext:"PDF"},
+    {name:"Detail.DWG", ext:"DWG"}, {name:"Notes.TXT", ext:"TXT"},
+  ]},
+};
+const getProj = id => PROJECTS[id] || PROJECTS._def;
+
+// ── STYLES ────────────────────────────────────────────────────
+const S = {
+  root:{ fontFamily:"'IBM Plex Mono', monospace", width:"100%", height:"100vh", overflow:"hidden", background:"#f5f4f4", userSelect:"none", position:"relative" },
+  header:{ height:61, background:"#fff", borderBottom:"1.25px solid #a21c26", display:"flex", alignItems:"center", padding:"0 14px", flexShrink:0, position:"relative", zIndex:200 },
+  logo:{ fontFamily:"inherit", fontSize:21, fontWeight:700, letterSpacing:2, textTransform:"uppercase", cursor:"pointer", color:"#a21c26" },
+  desktop:{ flex:1, position:"relative", overflow:"hidden", background:"#f5f4f4" },
+  deskIcon:{ position:"absolute", display:"flex", flexDirection:"column", alignItems:"center", textTransform:"uppercase", cursor:"pointer" },
+  deskLabel:{ marginTop:14, fontFamily:"inherit", fontSize:13, fontWeight:700, letterSpacing:2, color:"#a21c26", whiteSpace:"nowrap", textAlign:"center" },
+  winWrap:{ position:"absolute", display:"flex", flexDirection:"column", zIndex:10, minWidth:280, minHeight:180, pointerEvents:"auto", filter:"drop-shadow(2px 2px 0px rgba(162,28,38,0.10))" },
+  winBar:{ height:38, flexShrink:0, background:"#fff", border:"1.25px solid #a21c26", borderBottom:"1.25px solid #a21c26", borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", padding:"0 8px", gap:7, cursor:"grab", position:"relative" },
+  winBarTitle:{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", fontSize:13, fontWeight:700, letterSpacing:1.5, color:"#a21c26", pointerEvents:"none", whiteSpace:"nowrap", overflow:"hidden", maxWidth:"55%" },
+  winBody:{ flex:1, background:"#fff", border:"1.25px solid #a21c26", borderTop:"none", borderRadius:"0 0 4px 4px", display:"flex", flexDirection:"column", overflow:"hidden", boxShadow:"none", position:"relative" },
+  breadcrumb:{ padding:"6px 12px", fontSize:9, fontWeight:700, letterSpacing:1, color:"#c97a7a", display:"flex", alignItems:"center", gap:5, flexShrink:0, position:"absolute", top:0, left:0, right:0, zIndex:2, pointerEvents:"auto" },
+  scrollArea:{ flex:1, minHeight:0, overflowY:"auto", overflowX:"hidden", padding:"28px 20px 10px 0px", scrollbarWidth:"thin", scrollbarColor:"#a21c26 transparent" },
+};
+
+// ── DRAGGABLE WINDOW ─────────────────────────────────────────
+function Window({ id, title, style, onClose, onExpand, breadcrumb, children, onMouseDownCapture, noPadding }) {
+  const ref = useRef(null);
+  const drag = useRef(null);
+  const scrollRef = useRef(null);
+  const trackRef = useRef(null);
+  const [scrollRatio, setScrollRatio] = useState({ top:0, size:1 });
+  const [pos, setPos] = useState({ left: style.left, top: style.top, width: style.width, height: style.height, expanded: false, prev: null });
+
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const ratio = el.scrollTop / (el.scrollHeight - el.clientHeight || 1);
+    const size = el.clientHeight / el.scrollHeight;
+    setScrollRatio({ top: ratio, size });
+  };
+
+  useEffect(() => { handleScroll(); }, [children]);
+
+  const onThumbDown = e => {
+    e.preventDefault();
+    const el = scrollRef.current;
+    const track = trackRef.current;
+    if (!el || !track) return;
+    const startY = e.clientY;
+    const startScroll = el.scrollTop;
+    const trackH = track.clientHeight;
+    const scrollH = el.scrollHeight;
+    const clientH = el.clientHeight;
+    const thumbH = Math.max(20, (clientH / scrollH) * trackH);
+    const availableTrack = trackH - thumbH;
+    const onMove = ev => {
+      const dy = ev.clientY - startY;
+      el.scrollTop = startScroll + (dy / availableTrack) * (scrollH - clientH);
+    };
+    const onUp = () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  };
+
+  const MARGIN = 8;
+  const trackH = trackRef.current ? trackRef.current.clientHeight - MARGIN * 2 : 200;
+  const thumbH = 70;
+  const availableTrack = trackH - thumbH;
+  const thumbTop = MARGIN + scrollRatio.top * availableTrack;
+
+  const onMouseDown = useCallback(e => {
+    if (e.target.closest("[data-btn]")) return;
+    const r = ref.current.getBoundingClientRect();
+    drag.current = { ox: e.clientX - r.left, oy: e.clientY - r.top };
+  }, []);
+
+  useEffect(() => {
+    const onMove = e => {
+      if (!drag.current) return;
+      setPos(p => ({ ...p, left: Math.max(0, e.clientX - drag.current.ox), top: Math.max(0, e.clientY - drag.current.oy) }));
+    };
+    const onUp = () => { drag.current = null; };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+  }, []);
+
+  const handleExpand = () => {
+    if (pos.expanded) {
+      setPos({ ...pos.prev, expanded: false, prev: null });
+    } else {
+      setPos({ left: 0, top: 38, width: "100%", height: "calc(100vh - 38px)", expanded: true, prev: pos });
+    }
+  };
+
+  return (
+    <div ref={ref} onMouseDownCapture={onMouseDownCapture} style={{ ...S.winWrap, left: pos.left, top: pos.top, width: pos.width, height: pos.height, zIndex: style.zIndex || 10 }}>
+      <div style={S.winBar} onMouseDown={onMouseDown}>
+        <BtnClose onClick={onClose} />
+        {onExpand && <BtnExpand onClick={handleExpand} />}
+        <span style={S.winBarTitle}>{title}</span>
+      </div>
+      <div ref={trackRef} style={{ ...S.winBody }}>
+        {breadcrumb && <div style={S.breadcrumb}>{breadcrumb}</div>}
+        <div style={{ flex:1, minHeight:0, display:"flex", flexDirection:"row", overflow:"hidden" }}>
+          {noPadding ? (
+            <div style={{ flex:1, overflow:"hidden", display:"flex", flexDirection:"column" }}>{children}</div>
+          ) : (
+            <div className="win-scroll" style={{ ...S.scrollArea, flex:1, scrollbarWidth:"none", msOverflowStyle:"none" }} ref={scrollRef} onScroll={handleScroll}>{children}</div>
+          )}
+        </div>
+        {!noPadding && scrollRatio.size < 1 && (
+          <div
+            style={{ position:"absolute", right:4, width:4, borderRadius:99, background:"#e8b4b4", cursor:"pointer", top: thumbTop + "px", height: thumbH + "px" }}
+            onMouseDown={onThumbDown}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── DOT BACKGROUND ────────────────────────────────────────────
+const DotBg = () => (
+  <div style={{ position:"absolute", inset:0, pointerEvents:"none", background:"#fff", backgroundImage:"radial-gradient(circle, #030402 1px, transparent 1px)", backgroundSize:"56px 56px", backgroundPosition:"28px 28px", opacity:1 }}/>
+);
+
+// ── BREADCRUMB ────────────────────────────────────────────────
+const Breadcrumb = ({ parts }) => (
+  <div style={S.breadcrumb}>
+    {parts.map((p, i) => (
+      <span key={i}>
+        {i > 0 && <span style={{ color:"#f0d0d0", margin:"0 4px" }}>{"›"}</span>}
+        <span onClick={p.onClick} style={{ cursor: p.onClick ? "pointer" : "default" }}>{p.label}</span>
+      </span>
+    ))}
+  </div>
+);
+
+// ── MAIN APP ──────────────────────────────────────────────────
+// ── ADAPTIVE VIEWER WINDOW ────────────────────────────────────
+function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bringToFront, openDossier, openProjet, setFs, navigate, setWindows }) {
+  const [size, setSize] = useState({ width: 500, height: 440 });
+  const MARGIN = 35;
+  const BAR_H = 38;
+  const CRUMB_H = 28;
+
+  useEffect(() => {
+    const imgSrc = IMAGE_DATA[currentFile?.name];
+    if (!imgSrc) {
+      setSize({ width: 500, height: 440 });
+      return;
+    }
+    const img = new Image();
+    img.onload = () => {
+      const maxW = Math.min(window.innerWidth * 0.72, 860);
+      const maxH = Math.min(window.innerHeight * 0.72, 780);
+      const availW = maxW - MARGIN * 2;
+      const availH = maxH - BAR_H - CRUMB_H - MARGIN * 2;
+      const ratio = img.naturalWidth / img.naturalHeight;
+      let w, h;
+      if (ratio > availW / availH) { w = availW; h = Math.round(w / ratio); }
+      else { h = availH; w = Math.round(h * ratio); }
+      setSize({ width: Math.max(w + MARGIN * 2, 300), height: Math.max(h + BAR_H + CRUMB_H + MARGIN * 2, 260) });
+    };
+    img.src = imgSrc;
+  }, [currentFile?.name]);
+
+  const imgSrc = IMAGE_DATA[currentFile?.name];
+
+  return (
+    <Window
+      title={currentFile.name}
+      style={{ left:(270 + (win.offsetX||0)) + "px", top:(44 + (win.offsetY||0)) + "px", width: size.width + "px", height: size.height + "px", zIndex: win.zIndex }}
+      onClose={() => closeWindow(win.id)}
+      onMouseDownCapture={() => bringToFront(win.id)}
+      onExpand={() => setFs({ projId: win.projId, projName: win.projName, fileIdx: win.fileIdx })}
+      noPadding
+    >
+      {/* Breadcrumb inside content */}
+      <div style={{ position:"absolute", top:0, left:0, right:0, height:28, display:"flex", alignItems:"center", padding:"0 12px", fontSize:9, fontWeight:700, letterSpacing:1, color:"#c97a7a", zIndex:2, pointerEvents:"auto", background:"#fff" }}>
+        {[
+          { label:"Bureau", onClick:() => {} },
+          { label: folder.label, onClick:() => openDossier(win.folderId) },
+          { label: win.projName, onClick:() => openProjet(win.folderId, win.projId, win.projName) },
+          { label: currentFile.name },
+        ].map((p, i) => (
+          <span key={i}>
+            {i > 0 && <span style={{ color:"#f0d0d0", margin:"0 4px" }}>{"›"}</span>}
+            <span onClick={p.onClick} style={{ cursor: p.onClick ? "pointer" : "default" }}>{p.label}</span>
+          </span>
+        ))}
+      </div>
+      <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", position:"relative", padding: MARGIN + "px", boxSizing:"border-box", background:"#fff", marginTop:"5px" }}>
+        {/* Image or placeholder */}
+        {imgSrc ? (
+          <img src={imgSrc} alt={currentFile.name} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", display:"block" }}/>
+        ) : (
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"center", width:"100%", height:"100%", background:"repeating-linear-gradient(45deg,#e8e8e3,#e8e8e3 8px,#ddd 8px,#ddd 16px)", border:"1px solid #ccc" }}>
+            <FileIcon ext={currentFile.ext} w={120} h={144}/>
+          </div>
+        )}
+        {/* Left arrow */}
+        <div onClick={() => navigate(-1)} style={{ position:"absolute", left:6, top:"50%", transform:"translateY(-50%)", width:22, height:44, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", color:"#e8b4b4", fontSize:20, lineHeight:1, userSelect:"none" }}>
+          <svg width="12" height="24" viewBox="0 0 12 24"><polyline points="10,2 2,12 10,22" fill="none" stroke="#e8b4b4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+        {/* Right arrow */}
+        <div onClick={() => navigate(1)} style={{ position:"absolute", right:6, top:"50%", transform:"translateY(-50%)", width:22, height:44, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", color:"#e8b4b4", fontSize:20, lineHeight:1, userSelect:"none" }}>
+          <svg width="12" height="24" viewBox="0 0 12 24"><polyline points="2,2 10,12 2,22" fill="none" stroke="#e8b4b4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+      </div>
+    </Window>
+  );
+}
+
+let nextId = 1;
+let nextZ = 10;
+
+function App() {
+  const [windows, setWindows] = useState([]);
+  const [fs, setFs] = useState(null);
+
+  const bringToFront = id => {
+    nextZ++;
+    const z = nextZ;
+    setWindows(ws => ws.map(w => w.id === id ? { ...w, zIndex: z } : w));
+  };
+
+  const closeWindow = id => setWindows(ws => ws.filter(w => w.id !== id));
+
+  const openDossier = folderId => {
+    const existing = windows.find(w => w.type === "dossier" && w.folderId === folderId);
+    if (existing) { bringToFront(existing.id); return; }
+    nextZ++; nextId++;
+    setWindows(ws => [...ws, { id: nextId, type:"dossier", folderId, zIndex: nextZ }]);
+  };
+
+  const openProjet = (folderId, projId, projName) => {
+    const existing = windows.find(w => w.type === "projet" && w.projId === projId);
+    if (existing) { bringToFront(existing.id); return; }
+    nextZ++; nextId++;
+    setWindows(ws => [...ws, { id: nextId, type:"projet", folderId, projId, projName, zIndex: nextZ }]);
+  };
+
+  const openViewer = (folderId, projId, projName, fileIdx) => {
+    const id = ++nextId;
+    const z = ++nextZ;
+    const offset = (windows.filter(w => w.type === "viewer").length) * 22;
+    setWindows(ws => [...ws, { id, type:"viewer", folderId, projId, projName, fileIdx, zIndex: z, offsetX: offset, offsetY: offset }]);
+  };
+
+  useEffect(() => {
+    if (!fs) return;
+    const proj = getProj(fs.projId);
+    const h = e => {
+      if (e.key === "ArrowRight") setFs(s => ({ ...s, fileIdx: (s.fileIdx + 1) % proj.files.length }));
+      if (e.key === "ArrowLeft")  setFs(s => ({ ...s, fileIdx: (s.fileIdx - 1 + proj.files.length) % proj.files.length }));
+      if (e.key === "Escape") setFs(null);
+    };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [fs]);
+
+  return (
+    <div style={S.root}>
+      <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+      <style>{`.win-scroll::-webkit-scrollbar { display: none; } *, *:focus, *:active { outline: none !important; -webkit-tap-highlight-color: transparent; } html, body, #root { height: 100%; margin: 0; padding: 0; }`}</style>
+
+      <div style={{ display:"flex", flexDirection:"column", position:"absolute", inset:0 }}>
+        <header style={S.header}>
+          <div style={{ ...S.logo }} onClick={() => setWindows([])}>La Slack</div>
+        </header>
+        <div style={{ flex:1, position:"relative", overflow:"hidden" }}>
+          <DotBg/>
+
+          {["architecture","objects","graphicdesign"].map((fid, i) => {
+            const positions = [
+              { left:"8%", top:"6%" },
+              { right:"12%", top:"15%" },
+              { left:"22%", bottom:"8%" },
+            ];
+            const labels = ["ARCHITECTURE","OBJECTS","GRAPHIC DESIGN"];
+            const zIndexes = [3, 2, 1];
+            const dimmed = windows.length > 0;
+            return (
+              <div key={fid}
+                onClick={dimmed ? undefined : () => openDossier(fid)}
+                style={{ ...S.deskIcon, ...positions[i], opacity: dimmed ? 0.18 : 1, pointerEvents: dimmed ? "none" : "auto", zIndex: zIndexes[i] }}
+                onMouseEnter={e => { if (!dimmed) e.currentTarget.querySelector("svg").style.transform = "translateY(-6px)"; }}
+                onMouseLeave={e => { if (!dimmed) e.currentTarget.querySelector("svg").style.transform = "none"; }}
+              >
+                <FolderSVG w={350} h={269} sw={1.25}/>
+                <div style={S.deskLabel}>{labels[i]}</div>
+              </div>
+            );
+          })}
+          <div
+            onClick={windows.length > 0 ? undefined : () => openDossier("dump")}
+            style={{ ...S.deskIcon, right:"1%", bottom:"2%", opacity: windows.length > 0 ? 0.18 : 1, pointerEvents: windows.length > 0 ? "none" : "auto", zIndex: 0 }}
+            onMouseEnter={e => { if (!windows.length) e.currentTarget.querySelector("svg").style.transform = "translateY(-6px)"; }}
+            onMouseLeave={e => { if (!windows.length) e.currentTarget.querySelector("svg").style.transform = "none"; }}
+          >
+            <DumpSVG w={175} h={230} sw={1.25}/><div style={S.deskLabel}>DUMP</div>
+          </div>
+
+          {windows.map(win => {
+            const folder = FOLDERS[win.folderId] || {};
+            const proj = win.projId ? getProj(win.projId) : null;
+
+            if (win.type === "dossier") {
+              return (
+                <div key={win.id} style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex: win.zIndex }}>
+                  <Window
+                    title={folder.label}
+                    style={{ left:"20px", top:"16px", width:"640px", height:"391px", zIndex: win.zIndex }}
+                    onClose={() => closeWindow(win.id)}
+                    onMouseDownCapture={() => bringToFront(win.id)}
+                    breadcrumb={
+                      <Breadcrumb parts={[
+                        { label:"Bureau", onClick:() => setWindows([]) },
+                        { label: folder.label },
+                      ]}/>
+                    }
+                  >
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 160px)", columnGap:36, rowGap:8, padding:"0px 0", padding:"0px 0", marginTop:-11, justifyContent:"center", paddingBottom:10 }}>
+                      {(folder.sub || []).map(sub => (
+                        <div key={sub.id}
+                          onClick={() => openProjet(win.folderId, sub.id, sub.name)}
+                          style={{ display:"flex", flexDirection:"column", alignItems:"center", cursor:"pointer", padding:8 }}
+                          onMouseEnter={e => e.currentTarget.querySelector("svg").style.transform="translateY(-3px)"}
+                          onMouseLeave={e => e.currentTarget.querySelector("svg").style.transform="none"}
+                        >
+                          <FolderSVG w={160} h={123} sw={2.4}/>
+                          <div style={{ ...S.deskLabel, fontSize:9, marginTop:10, fontWeight:500 }}>{sub.name}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </Window>
+                </div>
+              );
+            }
+
+            if (win.type === "projet") {
+              return (
+                <div key={win.id} style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex: win.zIndex }}>
+                  <Window
+                    title={win.projName}
+                    style={{ left:"52px", top:"42px", width:"640px", height:"410px", zIndex: win.zIndex }}
+                    onClose={() => closeWindow(win.id)}
+                    onMouseDownCapture={() => bringToFront(win.id)}
+                    breadcrumb={
+                      <Breadcrumb parts={[
+                        { label:"Bureau", onClick:() => setWindows([]) },
+                        { label: folder.label, onClick:() => openDossier(win.folderId) },
+                        { label: win.projName },
+                      ]}/>
+                    }
+                  >
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(4, 100px)", columnGap:42, rowGap:16, marginLeft:-50, marginRight:-50, marginTop:-3, justifyContent:"center" }}>
+                      {proj.files.map((f, i) => (
+                        <div key={i}
+                          onClick={() => openViewer(win.folderId, win.projId, win.projName, i)}
+                          style={{ display:"flex", flexDirection:"column", alignItems:"center", cursor:"pointer", padding:4 }}
+                          onMouseEnter={e => e.currentTarget.querySelector("svg").style.transform="translateY(-2px)"}
+                          onMouseLeave={e => e.currentTarget.querySelector("svg").style.transform="none"}
+                        >
+                          <FileIcon ext={f.ext} w={108} h={130}/>
+                          <div style={{ ...S.deskLabel, fontSize:9, marginTop:10, fontWeight:500 }}>{f.name}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </Window>
+                </div>
+              );
+            }
+
+            if (win.type === "viewer") {
+              const currentFile = proj.files[win.fileIdx];
+              const navigate = (dir) => {
+                const newIdx = (win.fileIdx + dir + proj.files.length) % proj.files.length;
+                setWindows(ws => ws.map(w => w.id === win.id ? { ...w, fileIdx: newIdx } : w));
+              };
+              return (
+                <div key={win.id} style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex: win.zIndex }}>
+                  <AdaptiveViewerWindow
+                    win={win}
+                    currentFile={currentFile}
+                    proj={proj}
+                    folder={folder}
+                    closeWindow={closeWindow}
+                    bringToFront={bringToFront}
+                    openDossier={openDossier}
+                    openProjet={openProjet}
+                    setFs={setFs}
+                    navigate={navigate}
+                    setWindows={setWindows}
+                  />
+                </div>
+              );
+            }
+
+            return null;
+          })}
+        </div>
+      </div>
+
+      {/* FULLSCREEN */}
+      {fs && (() => {
+        const proj = getProj(fs.projId);
+        const currentFile = proj.files[fs.fileIdx];
+        return (
+          <div style={{ position:"fixed", top:0, left:0, width:"100vw", height:"100vh", background:"#0d1117", zIndex:9999, display:"flex", flexDirection:"column", overflow:"hidden" }}>
+            <div style={{ height:38, background:"#161b22", borderBottom:"1px solid #21262d", display:"flex", alignItems:"center", padding:"0 8px", gap:7, flexShrink:0, position:"relative" }}>
+              <div onClick={() => setFs(null)} style={{ width:22, height:22, background:"#ff5f57", border:"1px solid #c0392b", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", color:"#fff", fontSize:12 }}>×</div>
+              <span style={{ position:"absolute", right:12, fontFamily:"'IBM Plex Mono', monospace", fontSize:9, color:"#7a1519", letterSpacing:1.5 }}>{currentFile.name}</span>
+            </div>
+            <div style={{ flex:1, overflow:"hidden" }}>
+              <JsxViewerContent file={currentFile}/>
+            </div>
+            <div style={{ height:76, background:"#080808", borderTop:"1px solid #1a1a1a", display:"flex", gap:8, padding:"8px 14px", overflowX:"auto", flexShrink:0, alignItems:"center" }}>
+              {proj.files.map((f,i) => (
+                <div key={i} onClick={() => setFs(s => ({ ...s, fileIdx:i }))}
+                  style={{ width:58, height:58, flexShrink:0, border: i===fs.fileIdx ? "2px solid #fff" : "2px solid #2a2a2a", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", background: i===fs.fileIdx ? "#1e1e1e" : "#111" }}>
+                  <FileIcon ext={f.ext} w={36} h={43}/>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
