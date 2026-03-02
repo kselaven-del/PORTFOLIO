@@ -448,7 +448,7 @@ function JsxViewerContent({ file }) {
 
 // ── WINDOW BUTTONS ────────────────────────────────────────────
 const BtnClose = ({ onClick }) => (
-  <div onClick={onClick} style={{ width:22, height:22, cursor:"pointer", flexShrink:0 }}>
+  <div data-btn onClick={e => { e.stopPropagation(); onClick(e); }} style={{ width:22, height:22, cursor:"pointer", flexShrink:0 }}>
     <svg viewBox="0 0 22 22" width="22" height="22" overflow="visible">
       <rect x=".5" y=".5" width="21" height="21" fill="#fff" stroke="#a21c26" strokeWidth="1.25"/>
       <line x1="5.5" y1="16.5" x2="16.5" y2="5.5" stroke="#a21c26" strokeWidth="1.25"/>
@@ -457,7 +457,7 @@ const BtnClose = ({ onClick }) => (
   </div>
 );
 const BtnExpand = ({ onClick }) => (
-  <div onClick={onClick} style={{ width:22, height:22, cursor:"pointer", flexShrink:0 }}>
+  <div data-btn onClick={e => { e.stopPropagation(); onClick(e); }} style={{ width:22, height:22, cursor:"pointer", flexShrink:0 }}>
     <svg viewBox="0 0 22 22" width="22" height="22" overflow="visible">
       <rect x=".5" y=".5" width="21" height="21" fill="#fff" stroke="#a21c26" strokeWidth="1.25"/>
       <rect x="10.5" y=".5" width="11" height="11" fill="#fff" stroke="#a21c26" strokeWidth="1.25"/>
@@ -550,10 +550,6 @@ const PROJECTS = {
     {name:"ATA.Site-Section.png", ext:"PNG"},
   ]},
   ar12:{ label:"AR12 — CONSTRUCTING THE VIEW", files:[
-    {name:"CTV.C4D-Render-1.jpg", ext:"JPG"},
-    {name:"CTV.C4D-Render-1.png", ext:"PNG"},
-    {name:"CTV.C4D-Render-2.jpg", ext:"JPG"},
-    {name:"CTV.C4D-Render-2.png", ext:"PNG"},
     {name:"CTV.Cut-up-1.jpg", ext:"JPG"},
     {name:"CTV.Cut-up-2.jpg", ext:"JPG"},
     {name:"CTV.Montage-1.jpg", ext:"JPG"},
@@ -573,7 +569,6 @@ const PROJECTS = {
     {name:"FDB.Collage.Archives.jpg", ext:"JPG"},
     {name:"FDB.Collage.Atrium-1.cc.jpg", ext:"JPG"},
     {name:"FDB.Collage.Atrium-2.cc.jpeg", ext:"JPG"},
-    {name:"FDB.Collage.Atrium-2.jpg", ext:"JPG"},
     {name:"FDB.Collage.Lab.jpg", ext:"JPG"},
     {name:"FDB.Collage.Parc.jpg", ext:"JPG"},
     {name:"FDB.Collage.Place.cc.jpeg", ext:"JPG"},
@@ -739,8 +734,8 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
   const CRUMB_H = 28;
   const HEADER_H = 61;
   const MARGIN = 16;
-  const W = Math.round(window.innerWidth * 0.45);
   const H = Math.round(window.innerHeight * 0.45);
+  const W = Math.round(H * 1.2);
   const TOP_OFFSET = HEADER_H + 8;
 
   const imgSrc = getImageSrc(currentFile?.name);
@@ -753,12 +748,13 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
   const top = Math.max(TOP_OFFSET, Math.min(rawTop, vh - H - 16));
 
   const dragRef = useRef(null);
+  const containerRef = useRef(null);
   const [dragPos, setDragPos] = useState(null);
   const onBarMouseDown = useCallback(e => {
     if (e.target.closest("[data-btn]")) return;
-    const el = e.currentTarget.parentElement;
-    const r = el.getBoundingClientRect();
+    const r = containerRef.current.getBoundingClientRect();
     dragRef.current = { ox: e.clientX - r.left, oy: e.clientY - r.top };
+    e.preventDefault();
   }, []);
   useEffect(() => {
     const onMove = e => {
@@ -775,11 +771,11 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
   const finalTop = dragPos ? dragPos.top : top;
 
   return (
-    <div onMouseDownCapture={() => bringToFront(win.id)} style={{ position:"absolute", left: finalLeft + "px", top: finalTop + "px", width: W + "px", height: H + "px", display:"flex", flexDirection:"column", zIndex: win.zIndex, filter:"drop-shadow(2px 2px 0px rgba(162,28,38,0.10))", overflow:"hidden" }}>
+    <div ref={containerRef} onMouseDownCapture={() => bringToFront(win.id)} style={{ position:"absolute", left: finalLeft + "px", top: finalTop + "px", width: W + "px", height: H + "px", display:"flex", flexDirection:"column", zIndex: win.zIndex, filter:"drop-shadow(2px 2px 0px rgba(162,28,38,0.10))", overflow:"hidden" }}>
       {/* Bar */}
       <div onMouseDown={onBarMouseDown} style={{ height:BAR_H, flexShrink:0, background:"#fff", border:"1.25px solid #a21c26", borderBottom:"1.25px solid #a21c26", borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", padding:"0 8px", gap:7, cursor:"grab", position:"relative" }}>
-        <span data-btn><BtnClose onClick={() => closeWindow(win.id)} /></span>
-        <span data-btn><BtnExpand onClick={() => setFs({ projId: win.projId, projName: win.projName, fileIdx: win.fileIdx })} /></span>
+        <BtnClose onClick={() => closeWindow(win.id)} />
+        <BtnExpand onClick={() => setFs({ projId: win.projId, projName: win.projName, fileIdx: win.fileIdx })} />
         <span style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", fontSize:13, fontWeight:700, letterSpacing:1.5, color:"#a21c26", pointerEvents:"none", whiteSpace:"nowrap", overflow:"hidden", maxWidth:"55%", fontFamily:"inherit" }}>{currentFile.name}</span>
       </div>
       {/* Body */}
