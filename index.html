@@ -739,42 +739,18 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
   const CRUMB_H = 28;
   const HEADER_H = 61;
   const MARGIN = 16;
+  const W = Math.round(window.innerWidth * 0.45);
+  const H = Math.round(window.innerHeight * 0.45);
   const TOP_OFFSET = HEADER_H + 8;
-  const BOTTOM_MARGIN = 16;
-
-  const [size, setSize] = useState({ width: 500, height: 440 });
-
-  useEffect(() => {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const maxW = Math.min(vw * 0.82, 920);
-    const maxH = vh - TOP_OFFSET - BOTTOM_MARGIN;
-    const imgSrc = getImageSrc(currentFile?.name);
-    if (!imgSrc) { setSize({ width: 480, height: Math.min(400, maxH) }); return; }
-    const img = new Image();
-    img.onload = () => {
-      const availW = maxW - MARGIN * 2;
-      const availH = maxH - BAR_H - CRUMB_H - MARGIN * 2;
-      const ratio = img.naturalWidth / img.naturalHeight;
-      let w, h;
-      if (ratio > availW / availH) { w = availW; h = Math.round(w / ratio); }
-      else { h = availH; w = Math.round(h * ratio); }
-      setSize({
-        width: Math.min(Math.max(w + MARGIN * 2, 300), maxW),
-        height: Math.min(Math.max(h + BAR_H + CRUMB_H + MARGIN * 2, 260), maxH)
-      });
-    };
-    img.onerror = () => setSize({ width: 480, height: Math.min(400, maxH) });
-    img.src = imgSrc;
-  }, [currentFile?.name]);
 
   const imgSrc = getImageSrc(currentFile?.name);
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const rawLeft = 260 + (win.offsetX || 0);
-  const left = Math.max(4, Math.min(rawLeft, vw - size.width - 8));
-  const top = Math.max(TOP_OFFSET, Math.min(TOP_OFFSET + (win.offsetY || 0), vh - size.height - BOTTOM_MARGIN));
+  const rawTop = TOP_OFFSET + (win.offsetY || 0);
+  const left = Math.max(4, Math.min(rawLeft, vw - W - 8));
+  const top = Math.max(TOP_OFFSET, Math.min(rawTop, vh - H - 16));
 
   const dragRef = useRef(null);
   const [dragPos, setDragPos] = useState(null);
@@ -799,11 +775,11 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
   const finalTop = dragPos ? dragPos.top : top;
 
   return (
-    <div onMouseDownCapture={() => bringToFront(win.id)} style={{ position:"absolute", left: finalLeft + "px", top: finalTop + "px", width: size.width + "px", height: size.height + "px", display:"flex", flexDirection:"column", zIndex: win.zIndex, filter:"drop-shadow(2px 2px 0px rgba(162,28,38,0.10))", overflow:"hidden" }}>
+    <div onMouseDownCapture={() => bringToFront(win.id)} style={{ position:"absolute", left: finalLeft + "px", top: finalTop + "px", width: W + "px", height: H + "px", display:"flex", flexDirection:"column", zIndex: win.zIndex, filter:"drop-shadow(2px 2px 0px rgba(162,28,38,0.10))", overflow:"hidden" }}>
       {/* Bar */}
       <div onMouseDown={onBarMouseDown} style={{ height:BAR_H, flexShrink:0, background:"#fff", border:"1.25px solid #a21c26", borderBottom:"1.25px solid #a21c26", borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", padding:"0 8px", gap:7, cursor:"grab", position:"relative" }}>
-        <BtnClose onClick={() => closeWindow(win.id)} />
-        <BtnExpand onClick={() => setFs({ projId: win.projId, projName: win.projName, fileIdx: win.fileIdx })} />
+        <span data-btn><BtnClose onClick={() => closeWindow(win.id)} /></span>
+        <span data-btn><BtnExpand onClick={() => setFs({ projId: win.projId, projName: win.projName, fileIdx: win.fileIdx })} /></span>
         <span style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", fontSize:13, fontWeight:700, letterSpacing:1.5, color:"#a21c26", pointerEvents:"none", whiteSpace:"nowrap", overflow:"hidden", maxWidth:"55%", fontFamily:"inherit" }}>{currentFile.name}</span>
       </div>
       {/* Body */}
@@ -1061,7 +1037,7 @@ function App() {
         const currentFile = proj.files[fs.fileIdx];
         const imgSrc = getImageSrc(currentFile?.name);
         return (
-          <div style={{ position:"fixed", top:0, left:0, width:"100vw", height:"100vh", background:"#fff", zIndex:9999, display:"flex", flexDirection:"column", overflow:"hidden" }}>
+          <div style={{ position:"fixed", top:61, left:0, right:0, bottom:0, background:"#fff", zIndex:9999, display:"flex", flexDirection:"column", overflow:"hidden" }}>
             <div style={{ height:38, background:"#fff", borderBottom:"1.25px solid #a21c26", display:"flex", alignItems:"center", padding:"0 8px", gap:7, flexShrink:0, position:"relative" }}>
               <BtnClose onClick={() => setFs(null)} />
               <span style={{ position:"absolute", right:12, fontFamily:"'IBM Plex Mono', monospace", fontSize:9, color:"#a21c26", letterSpacing:1.5 }}>{currentFile.name}</span>
