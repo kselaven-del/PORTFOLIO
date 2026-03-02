@@ -856,8 +856,29 @@ function App() {
   const openViewer = (folderId, projId, projName, fileIdx) => {
     const id = ++nextId;
     const z = ++nextZ;
-    const offset = (windows.filter(w => w.type === "viewer").length) * 22;
-    setWindows(ws => [...ws, { id, type:"viewer", folderId, projId, projName, fileIdx, zIndex: z, offsetX: offset, offsetY: offset }]);
+    const count = windows.filter(w => w.type === "viewer").length;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const H = Math.round(vh * 0.45);
+    const W = Math.round(H * 1.2);
+    const cols = 2;
+    const col = count % cols;
+    const row = Math.floor(count / cols);
+    const jitterX = Math.round((Math.random() - 0.5) * 80);
+    const jitterY = Math.round((Math.random() - 0.5) * 60);
+    const offsetX = col * Math.round(W * 0.85) + jitterX;
+    const offsetY = row * Math.round(H * 0.85) + jitterY;
+    setWindows(ws => {
+      const minViewerZ = Math.min(...ws.filter(w => w.type === "viewer").map(w => w.zIndex), z);
+      return [
+        ...ws.map(w =>
+          (w.type === "dossier" && w.folderId === folderId) || (w.type === "projet" && w.projId === projId)
+            ? { ...w, zIndex: Math.min(w.zIndex, minViewerZ - 1) }
+            : w
+        ),
+        { id, type:"viewer", folderId, projId, projName, fileIdx, zIndex: z, offsetX, offsetY }
+      ];
+    });
   };
 
   useEffect(() => {
