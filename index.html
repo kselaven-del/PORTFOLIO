@@ -738,48 +738,51 @@ const Breadcrumb = ({ parts }) => (
 // ── MAIN APP ──────────────────────────────────────────────────
 // ── ADAPTIVE VIEWER WINDOW ────────────────────────────────────
 function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bringToFront, openDossier, openProjet, setFs, navigate, setWindows }) {
-  const MARGIN = 20;
   const BAR_H = 38;
   const CRUMB_H = 28;
   const HEADER_H = 61;
-  const PADDING = 4; // extra safety
-
-  const maxW = Math.min(window.innerWidth * 0.82, 920);
-  const maxH = Math.min(window.innerHeight - HEADER_H - 30, 820);
+  const MARGIN = 16;
+  const TOP_OFFSET = HEADER_H + 8;
+  const BOTTOM_MARGIN = 16;
 
   const [size, setSize] = useState({ width: 500, height: 440 });
 
   useEffect(() => {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const maxW = Math.min(vw * 0.82, 920);
+    const maxH = vh - TOP_OFFSET - BOTTOM_MARGIN;
     const imgSrc = getImageSrc(currentFile?.name);
-    if (!imgSrc) { setSize({ width: 480, height: 400 }); return; }
+    if (!imgSrc) { setSize({ width: 480, height: Math.min(400, maxH) }); return; }
     const img = new Image();
     img.onload = () => {
       const availW = maxW - MARGIN * 2;
-      const availH = maxH - BAR_H - CRUMB_H - MARGIN * 2 - PADDING;
+      const availH = maxH - BAR_H - CRUMB_H - MARGIN * 2;
       const ratio = img.naturalWidth / img.naturalHeight;
       let w, h;
       if (ratio > availW / availH) { w = availW; h = Math.round(w / ratio); }
       else { h = availH; w = Math.round(h * ratio); }
-      const finalW = Math.max(w + MARGIN * 2, 300);
-      const finalH = Math.max(h + BAR_H + CRUMB_H + MARGIN * 2 + PADDING, 260);
-      setSize({ width: Math.min(finalW, maxW), height: Math.min(finalH, maxH) });
+      setSize({
+        width: Math.min(Math.max(w + MARGIN * 2, 300), maxW),
+        height: Math.min(Math.max(h + BAR_H + CRUMB_H + MARGIN * 2, 260), maxH)
+      });
     };
-    img.onerror = () => setSize({ width: 480, height: 400 });
+    img.onerror = () => setSize({ width: 480, height: Math.min(400, maxH) });
     img.src = imgSrc;
   }, [currentFile?.name]);
 
   const imgSrc = getImageSrc(currentFile?.name);
 
-  // Clamp position to keep window inside viewport
-  const rawLeft = 270 + (win.offsetX || 0);
-  const rawTop = HEADER_H + 6 + (win.offsetY || 0);
-  const clampedLeft = Math.min(rawLeft, window.innerWidth - size.width - 10);
-  const clampedTop = Math.min(Math.max(rawTop, HEADER_H + 4), window.innerHeight - size.height - 10);
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const rawLeft = 260 + (win.offsetX || 0);
+  const left = Math.max(4, Math.min(rawLeft, vw - size.width - 8));
+  const top = Math.max(TOP_OFFSET, Math.min(TOP_OFFSET + (win.offsetY || 0), vh - size.height - BOTTOM_MARGIN));
 
   return (
     <Window
       title={currentFile.name}
-      style={{ left: Math.max(4, clampedLeft) + "px", top: Math.max(HEADER_H + 4, clampedTop) + "px", width: size.width + "px", height: size.height + "px", zIndex: win.zIndex }}
+      style={{ left: left + "px", top: top + "px", width: size.width + "px", height: size.height + "px", zIndex: win.zIndex }}
       onClose={() => closeWindow(win.id)}
       onMouseDownCapture={() => bringToFront(win.id)}
       onExpand={() => setFs({ projId: win.projId, projName: win.projName, fileIdx: win.fileIdx })}
@@ -987,7 +990,7 @@ function App() {
                               <img
                                 src={thumbSrc}
                                 alt={f.name}
-                                style={{ width:108, height:130, objectFit:"cover", display:"block", imageRendering:"pixelated", border:"1px solid #a21c26", transition:"transform 0.15s" }}
+                                style={{ width:108, height:130, objectFit:"contain", display:"block", imageRendering:"pixelated", transition:"transform 0.15s" }}
                                 onError={e => { e.target.style.display="none"; e.target.nextSibling.style.display="block"; }}
                               />
                             ) : null}
