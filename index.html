@@ -717,26 +717,35 @@ const DotBg = () => (
 
 // ── BREADCRUMB ────────────────────────────────────────────────
 const Breadcrumb = ({ parts }) => (
-  <div style={S.breadcrumb}>
-    {parts.map((p, i) => (
-      <span key={i}>
-        {i > 0 && <span style={{ color:"#f0d0d0", margin:"0 4px" }}>{"›"}</span>}
-        <span onClick={p.onClick} style={{ cursor: p.onClick ? "pointer" : "default" }}>{p.label}</span>
-      </span>
-    ))}
+  <div style={{ ...S.breadcrumb, flexWrap:"nowrap", overflow:"hidden" }}>
+    {parts.map((p, i) => {
+      const isLast = i === parts.length - 1;
+      const isMiddle = i > 0 && !isLast;
+      return (
+        <span key={i} style={{ display:"flex", alignItems:"center", flexShrink: isMiddle ? 1 : 0, minWidth:0, overflow:"hidden" }}>
+          {i > 0 && <span style={{ color:"#f0d0d0", margin:"0 4px", flexShrink:0 }}>{"›"}</span>}
+          <span
+            onClick={p.onClick}
+            style={{ cursor: p.onClick ? "pointer" : "default", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth: isMiddle ? "120px" : isLast ? "160px" : "none" }}
+            title={p.label}
+          >{p.label}</span>
+        </span>
+      );
+    })}
   </div>
 );
 
 // ── MAIN APP ──────────────────────────────────────────────────
 // ── ADAPTIVE VIEWER WINDOW ────────────────────────────────────
 function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bringToFront, openDossier, openProjet, setFs, navigate, setWindows }) {
-  const MARGIN = 24;
+  const MARGIN = 20;
   const BAR_H = 38;
   const CRUMB_H = 28;
   const HEADER_H = 61;
+  const PADDING = 4; // extra safety
 
-  const maxW = Math.min(window.innerWidth * 0.80, 900);
-  const maxH = Math.min(window.innerHeight - HEADER_H - 20, 800);
+  const maxW = Math.min(window.innerWidth * 0.82, 920);
+  const maxH = Math.min(window.innerHeight - HEADER_H - 30, 820);
 
   const [size, setSize] = useState({ width: 500, height: 440 });
 
@@ -746,13 +755,13 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
     const img = new Image();
     img.onload = () => {
       const availW = maxW - MARGIN * 2;
-      const availH = maxH - BAR_H - CRUMB_H - MARGIN * 2;
+      const availH = maxH - BAR_H - CRUMB_H - MARGIN * 2 - PADDING;
       const ratio = img.naturalWidth / img.naturalHeight;
       let w, h;
       if (ratio > availW / availH) { w = availW; h = Math.round(w / ratio); }
       else { h = availH; w = Math.round(h * ratio); }
       const finalW = Math.max(w + MARGIN * 2, 300);
-      const finalH = Math.max(h + BAR_H + CRUMB_H + MARGIN * 2, 260);
+      const finalH = Math.max(h + BAR_H + CRUMB_H + MARGIN * 2 + PADDING, 260);
       setSize({ width: Math.min(finalW, maxW), height: Math.min(finalH, maxH) });
     };
     img.onerror = () => setSize({ width: 480, height: 400 });
@@ -777,20 +786,24 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
       noPadding
     >
       {/* Breadcrumb inside content */}
-      <div style={{ position:"absolute", top:0, left:0, right:0, height:28, display:"flex", alignItems:"center", padding:"0 12px", fontSize:9, fontWeight:700, letterSpacing:1, color:"#c97a7a", zIndex:2, pointerEvents:"auto", background:"#fff" }}>
+      <div style={{ position:"absolute", top:0, left:0, right:0, height:28, display:"flex", alignItems:"center", padding:"0 12px", fontSize:9, fontWeight:700, letterSpacing:1, color:"#c97a7a", zIndex:2, pointerEvents:"auto", background:"#fff", overflow:"hidden", flexWrap:"nowrap" }}>
         {[
           { label:"Bureau", onClick:() => {} },
           { label: folder.label, onClick:() => openDossier(win.folderId) },
           { label: win.projName, onClick:() => openProjet(win.folderId, win.projId, win.projName) },
           { label: currentFile.name },
-        ].map((p, i) => (
-          <span key={i}>
-            {i > 0 && <span style={{ color:"#f0d0d0", margin:"0 4px" }}>{"›"}</span>}
-            <span onClick={p.onClick} style={{ cursor: p.onClick ? "pointer" : "default" }}>{p.label}</span>
-          </span>
-        ))}
+        ].map((p, i, arr) => {
+          const isMiddle = i > 0 && i < arr.length - 1;
+          const isLast = i === arr.length - 1;
+          return (
+            <span key={i} style={{ display:"flex", alignItems:"center", flexShrink: isMiddle ? 1 : 0, minWidth:0, overflow:"hidden" }}>
+              {i > 0 && <span style={{ color:"#f0d0d0", margin:"0 4px", flexShrink:0 }}>{"›"}</span>}
+              <span onClick={p.onClick} title={p.label} style={{ cursor: p.onClick ? "pointer" : "default", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth: isMiddle ? "100px" : isLast ? "140px" : "none" }}>{p.label}</span>
+            </span>
+          );
+        })}
       </div>
-      <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", position:"relative", padding: MARGIN + "px", boxSizing:"border-box", background:"#fff", marginTop:"5px" }}>
+      <div style={{ position:"absolute", top:CRUMB_H, left:0, right:0, bottom:0, display:"flex", alignItems:"center", justifyContent:"center", padding: MARGIN + "px", boxSizing:"border-box", background:"#fff" }}>
         {/* Image or placeholder */}
         {imgSrc ? (
           <img src={imgSrc} alt={currentFile.name} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", display:"block" }}/>
