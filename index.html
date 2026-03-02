@@ -741,7 +741,7 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
   const MARGIN = 16;
   const H = Math.round(window.innerHeight * 0.45);
   const W = Math.round(H * 1.2);
-  const TOP_OFFSET = HEADER_H + 8;
+  const TOP_OFFSET = HEADER_H;
 
   const imgSrc = getImageSrc(currentFile?.name);
 
@@ -872,7 +872,7 @@ function App() {
   }, [fs]);
 
   return (
-    <div style={S.root}>
+    <div style={S.root} onDragStart={e => e.preventDefault()}>
       <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet"/>
       <style>{`.win-scroll::-webkit-scrollbar { display: none; } *, *:focus, *:active { outline: none !important; -webkit-tap-highlight-color: transparent; } html, body, #root { height: 100%; margin: 0; padding: 0; }`}</style>
 
