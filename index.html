@@ -572,14 +572,11 @@ const PROJECTS = {
   ar14:{ label:"AR14 — FONDAZIONE BERIO", files:[
     {name:"FDB.Collage.Archives.jpg", ext:"JPG"},
     {name:"FDB.Collage.Atrium-1.cc.jpg", ext:"JPG"},
-    {name:"FDB.Collage.Atrium-1.png", ext:"PNG"},
     {name:"FDB.Collage.Atrium-2.cc.jpeg", ext:"JPG"},
     {name:"FDB.Collage.Atrium-2.jpg", ext:"JPG"},
     {name:"FDB.Collage.Lab.jpg", ext:"JPG"},
     {name:"FDB.Collage.Parc.jpg", ext:"JPG"},
     {name:"FDB.Collage.Place.cc.jpeg", ext:"JPG"},
-    {name:"FDB.Collage.Place.jpg", ext:"JPG"},
-    {name:"FDB.Model..png", ext:"PNG"},
     {name:"FDB.Model.cc.jpg", ext:"JPG"},
     {name:"FDB.Plan-1.pdf", ext:"PDF"},
     {name:"FDB.Plan-2.pdf", ext:"PDF"},
@@ -789,7 +786,7 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
       noPadding
     >
       {/* Breadcrumb inside content */}
-      <div style={{ position:"absolute", top:0, left:0, right:0, height:28, display:"flex", alignItems:"center", padding:"0 12px", fontSize:9, fontWeight:700, letterSpacing:1, color:"#c97a7a", zIndex:2, pointerEvents:"auto", background:"#fff", overflow:"hidden", flexWrap:"nowrap" }}>
+      <div style={{ height:CRUMB_H, flexShrink:0, display:"flex", alignItems:"center", padding:"0 12px", fontSize:9, fontWeight:700, letterSpacing:1, color:"#c97a7a", zIndex:2, background:"#fff", overflow:"hidden", flexWrap:"nowrap" }}>
         {[
           { label:"Bureau", onClick:() => {} },
           { label: folder.label, onClick:() => openDossier(win.folderId) },
@@ -806,7 +803,7 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
           );
         })}
       </div>
-      <div style={{ position:"absolute", top:CRUMB_H, left:0, right:0, bottom:0, display:"flex", alignItems:"center", justifyContent:"center", padding: MARGIN + "px", boxSizing:"border-box", background:"#fff" }}>
+      <div style={{ flex:1, minHeight:0, display:"flex", alignItems:"center", justifyContent:"center", padding: MARGIN + "px", boxSizing:"border-box", background:"#fff", overflow:"hidden", position:"relative" }}>
         {/* Image or placeholder */}
         {imgSrc ? (
           <img src={imgSrc} alt={currentFile.name} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", display:"block" }}/>
