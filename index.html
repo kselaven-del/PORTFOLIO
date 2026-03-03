@@ -1064,7 +1064,7 @@ function App() {
             {/* Barre top avec ligne rouge */}
             <div style={{ height:38, background:"#fff", borderBottom:"1.25px solid #a21c26", display:"flex", alignItems:"center", padding:"0 8px", gap:7, flexShrink:0, position:"relative" }}>
               <BtnClose onClick={() => setFs(null)} />
-              <div style={{ position:"absolute", left:80, right:12, top:"50%", transform:"translateY(-50%)", display:"flex", alignItems:"center", fontSize:9, fontWeight:700, letterSpacing:1, color:"#c97a7a", overflow:"hidden", whiteSpace:"nowrap" }}>
+              <div style={{ position:"absolute", left:80, right:12, top:"50%", transform:"translateY(-50%)", display:"flex", alignItems:"center", justifyContent:"flex-end", fontSize:9, fontWeight:700, letterSpacing:1, color:"#c97a7a", overflow:"hidden", whiteSpace:"nowrap" }}>
                 {[
                   { label:"Bureau" },
                   { label: fs.folderId ? FOLDERS[fs.folderId]?.label : "" },
