@@ -781,7 +781,7 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
       {/* Bar */}
       <div onMouseDown={onBarMouseDown} style={{ height:BAR_H, flexShrink:0, background:"#fff", border:"1.25px solid #a21c26", borderBottom:"1.25px solid #a21c26", borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", padding:"0 8px", gap:7, cursor:"grab", position:"relative", userSelect:"none" }}>
         <BtnClose onClick={() => closeWindow(win.id)} />
-        <BtnExpand onClick={() => setFs({ projId: win.projId, projName: win.projName, fileIdx: win.fileIdx })} />
+        <BtnExpand onClick={() => setFs({ projId: win.projId, projName: win.projName, fileIdx: win.fileIdx, folderId: win.folderId })} />
         <span style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", fontSize:13, fontWeight:700, letterSpacing:1.5, color:"#a21c26", pointerEvents:"none", whiteSpace:"nowrap", overflow:"hidden", maxWidth:"55%", fontFamily:"inherit" }}>{currentFile.name}</span>
       </div>
       {/* Body */}
@@ -1064,7 +1064,22 @@ function App() {
             {/* Barre top avec ligne rouge */}
             <div style={{ height:38, background:"#fff", borderBottom:"1.25px solid #a21c26", display:"flex", alignItems:"center", padding:"0 8px", gap:7, flexShrink:0, position:"relative" }}>
               <BtnClose onClick={() => setFs(null)} />
-              <span style={{ position:"absolute", right:12, fontFamily:"'IBM Plex Mono', monospace", fontSize:9, color:"#a21c26", letterSpacing:1.5 }}>{currentFile.name}</span>
+              <div style={{ position:"absolute", left:80, right:12, top:"50%", transform:"translateY(-50%)", display:"flex", alignItems:"center", fontSize:9, fontWeight:700, letterSpacing:1, color:"#c97a7a", overflow:"hidden", whiteSpace:"nowrap" }}>
+                {[
+                  { label:"Bureau" },
+                  { label: fs.folderId ? FOLDERS[fs.folderId]?.label : "" },
+                  { label: fs.projName },
+                  { label: currentFile.name },
+                ].filter(p => p.label).map((p, i, arr) => {
+                  const isLast = i === arr.length - 1;
+                  return (
+                    <span key={i} style={{ display:"flex", alignItems:"center", flexShrink: isLast ? 0 : 1, minWidth:0, overflow:"hidden" }}>
+                      {i > 0 && <span style={{ color:"#f0d0d0", margin:"0 4px", flexShrink:0 }}>{"›"}</span>}
+                      <span title={p.label} style={{ overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth: isLast ? "none" : "120px", color: isLast ? "#a21c26" : "#c97a7a" }}>{p.label}</span>
+                    </span>
+                  );
+                })}
+              </div>
             </div>
             {/* Image + flèches collées à l'image */}
             <div style={{ flex:1, minHeight:0, overflow:"hidden", display:"flex", alignItems:"center", justifyContent:"center", background:"#fff", position:"relative" }}>
