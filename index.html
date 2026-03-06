@@ -113,21 +113,22 @@ const FILE_ICONS = { JPG: FileImgSVG, PNG: FileImgSVG, PDF: FilePdfSVG, TXT: Fil
 const GITHUB_BASE = "https://raw.githubusercontent.com/kselaven-del/portfolio-architecture/main/";
 const GITHUB_DUMP = "https://raw.githubusercontent.com/kselaven-del/portfolio-dump/main/";
 const DUMP_FILES = new Set([
-  "Capture d'écran 2019-09-20 à 23.17.37.png",
-  "Capture d'écran 2019-12-05 à 11.29.13.png",
-  "Capture d'écran 2020-01-24 à 19.16.15.png",
-  "Capture d'écran 2020-01-31 à 21.18.39.png",
-  "Capture d'écran 2022-03-30 à 00.10.36.png",
+  "Capture d’écran 2019-09-20 à 23.17.37.png",
+  "Capture d’écran 2019-12-05 à 11.29.13.png",
+  "Capture d’écran 2020-01-24 à 19.16.15.png",
+  "Capture d’écran 2020-01-31 à 21.18.39.png",
+  "Capture d’écran 2022-03-30 à 00.10.36.png",
   "MOQ-UP T-SHIRT WORKSHOP.png",
 ]);
 const IMAGE_EXTS = ["JPG", "PNG", "JPEG"];
 const IMAGE_DATA = {};
+const encodeFilename = (name) => name.split("/").map(s => encodeURIComponent(s.normalize("NFC"))).join("/");
 const getImageSrc = (name) => {
   if (!name) return null;
   const ext = name.split(".").pop().toUpperCase();
   if (IMAGE_EXTS.includes(ext)) {
     const base = DUMP_FILES.has(name) ? GITHUB_DUMP : GITHUB_BASE;
-    return base + name.split("/").map(encodeURIComponent).join("/");
+    return base + encodeFilename(name);
   }
   return null;
 };
@@ -499,11 +500,11 @@ const FOLDERS = {
     {name:"OBJ03 — PROTOTYPES", id:"obj03"},
   ]},
   dump:{ label:"DUMP", files:[
-    {name:"Capture d'écran 2019-09-20 à 23.17.37.png", ext:"PNG"},
-    {name:"Capture d'écran 2019-12-05 à 11.29.13.png", ext:"PNG"},
-    {name:"Capture d'écran 2020-01-24 à 19.16.15.png", ext:"PNG"},
-    {name:"Capture d'écran 2020-01-31 à 21.18.39.png", ext:"PNG"},
-    {name:"Capture d'écran 2022-03-30 à 00.10.36.png", ext:"PNG"},
+    {name:"Capture d’écran 2019-09-20 à 23.17.37.png", ext:"PNG"},
+    {name:"Capture d’écran 2019-12-05 à 11.29.13.png", ext:"PNG"},
+    {name:"Capture d’écran 2020-01-24 à 19.16.15.png", ext:"PNG"},
+    {name:"Capture d’écran 2020-01-31 à 21.18.39.png", ext:"PNG"},
+    {name:"Capture d’écran 2022-03-30 à 00.10.36.png", ext:"PNG"},
     {name:"MOQ-UP T-SHIRT WORKSHOP.png", ext:"PNG"},
   ]},
 };
@@ -812,21 +813,26 @@ function DumpWindow({ win, closeWindow, bringToFront, openViewer }) {
   };
 
   // Drag d'un fichier individuel
-  const onFileMouseDown = (e, idx) => {
+  const onFileMouseDown = (e, idx, fname) => {
     e.stopPropagation();
     e.preventDefault();
     const startX = e.clientX;
     const startY = e.clientY;
     const origX = positions[idx].x;
     const origY = positions[idx].y;
+    let moved = false;
     const onMove = (ev) => {
-      const dx = (ev.clientX - startX) / scale;
-      const dy = (ev.clientY - startY) / scale;
-      setPositions(ps => ps.map((p, i) => i === idx ? { ...p, x: origX + dx, y: origY + dy } : p));
+      const dx = ev.clientX - startX;
+      const dy = ev.clientY - startY;
+      if (!moved && Math.sqrt(dx*dx + dy*dy) > 4) moved = true;
+      if (moved) {
+        setPositions(ps => ps.map((p, i) => i === idx ? { ...p, x: origX + dx/scale, y: origY + dy/scale } : p));
+      }
     };
     const onUp = () => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
+      if (!moved) openViewer("dump", "dump", "DUMP", idx);
     };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
@@ -853,8 +859,7 @@ function DumpWindow({ win, closeWindow, bringToFront, openViewer }) {
             return (
               <div
                 key={i}
-                onMouseDown={(e) => onFileMouseDown(e, i)}
-                onClick={() => openViewer("dump", "dump", "DUMP", i)}
+                onMouseDown={(e) => onFileMouseDown(e, i, f.name)}
                 style={{ position:"absolute", left:pos.x, top:pos.y, transform:`rotate(${pos.rot}deg)`, cursor:"grab", userSelect:"none", display:"flex", flexDirection:"column", alignItems:"center", width:120 }}
               >
                 {thumbSrc
