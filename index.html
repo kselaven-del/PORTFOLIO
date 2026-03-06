@@ -111,12 +111,24 @@ const FileTxtSVG = ({ w = 80, h = 96 }) => (
 
 const FILE_ICONS = { JPG: FileImgSVG, PNG: FileImgSVG, PDF: FilePdfSVG, TXT: FileTxtSVG, DWG: FileTxtSVG };
 const GITHUB_BASE = "https://raw.githubusercontent.com/kselaven-del/portfolio-architecture/main/";
+const GITHUB_DUMP = "https://raw.githubusercontent.com/kselaven-del/portfolio-dump/main/";
+const DUMP_FILES = new Set([
+  "Capture d'écran 2019-09-20 à 23.17.37.png",
+  "Capture d'écran 2019-12-05 à 11.29.13.png",
+  "Capture d'écran 2020-01-24 à 19.16.15.png",
+  "Capture d'écran 2020-01-31 à 21.18.39.png",
+  "Capture d'écran 2022-03-30 à 00.10.36.png",
+  "MOQ-UP T-SHIRT WORKSHOP.png",
+]);
 const IMAGE_EXTS = ["JPG", "PNG", "JPEG"];
 const IMAGE_DATA = {};
 const getImageSrc = (name) => {
   if (!name) return null;
   const ext = name.split(".").pop().toUpperCase();
-  if (IMAGE_EXTS.includes(ext)) return GITHUB_BASE + name.split("/").map(encodeURIComponent).join("/");
+  if (IMAGE_EXTS.includes(ext)) {
+    const base = DUMP_FILES.has(name) ? GITHUB_DUMP : GITHUB_BASE;
+    return base + name.split("/").map(encodeURIComponent).join("/");
+  }
   return null;
 };
 const FileIcon = ({ ext, w, h }) => { const C = FILE_ICONS[ext] || FileTxtSVG; return <C w={w} h={h} />; };
@@ -486,8 +498,13 @@ const FOLDERS = {
     {name:"OBJ01 — MOBILIER", id:"obj01"}, {name:"OBJ02 — LUMINAIRES", id:"obj02"},
     {name:"OBJ03 — PROTOTYPES", id:"obj03"},
   ]},
-  dump:{ label:"DUMP", sub:[
-    {name:"MISC 01", id:"misc01"}, {name:"MISC 02", id:"misc02"}, {name:"ARCHIVES", id:"archives"},
+  dump:{ label:"DUMP", files:[
+    {name:"Capture d'écran 2019-09-20 à 23.17.37.png", ext:"PNG"},
+    {name:"Capture d'écran 2019-12-05 à 11.29.13.png", ext:"PNG"},
+    {name:"Capture d'écran 2020-01-24 à 19.16.15.png", ext:"PNG"},
+    {name:"Capture d'écran 2020-01-31 à 21.18.39.png", ext:"PNG"},
+    {name:"Capture d'écran 2022-03-30 à 00.10.36.png", ext:"PNG"},
+    {name:"MOQ-UP T-SHIRT WORKSHOP.png", ext:"PNG"},
   ]},
 };
 
@@ -597,7 +614,7 @@ const PROJECTS = {
     {name:"Coupe.JPG", ext:"JPG"},
   ]},
 };
-const getProj = id => PROJECTS[id] || PROJECTS._def;
+const getProj = id => id === "dump" ? { label:"DUMP", files: FOLDERS.dump.files || [] } : (PROJECTS[id] || PROJECTS._def);
 
 // ── STYLES ────────────────────────────────────────────────────
 const S = {
@@ -755,6 +772,107 @@ const DESCRIPTIONS = {
   ar14: "AR14 - Fondazione Berio\n\nThe Fondazione Berio is a theoretical project for a public building designed to archive sound documents for RAI (Radiotelevisione Italiana). It appears as a large treasure chest, a blind box where functional archive spaces, sound production and restoration areas, and listening and consultation spaces coexist.\n\nThe building follows a clear spatial organisation. The ground floor, framed by eight imposing concrete shafts, houses an open, multi-purpose space including a caf\u00e9, a terrace, a reception area and a cloakroom. On the first floor, the main space, a large atrium, is surrounded by a ring of individual listening spaces on which rest seven floors of archives and a level dedicated to the production and restoration of sound documents.\n\nThe emblematic feature of the building is a modular acoustic ceiling that hangs over the atrium. Able to be adjusted in height, it transforms the atrium into an auditorium, allowing sound content to be broadcast under controlled and varied acoustic conditions. The project pays particular attention to detail, with the edges of the archive compactors designed as acoustic panels, and the handrails in the archive spaces also serving as technical trellises for the sound and lighting equipment. Choices that reflect a desire for balance and dialogue between the different functions of the building, where each programme enriches the other. The Fondazione Berio thus stands for a harmonious cohabitation between storage and listening, designed to enhance the experience of sound archives within a coherent whole.",
   ar15: "AR15 Superstudio\n\nSuperstudio A was a research studio led by Pier Vittorio Aureli at EPFL, dedicated to the study of the villa as an architectural type from antiquity to the twentieth century. Rather than designing, students close-read a selected case study and produce an Analogous Map: an 80\u00d780cm line drawing that functions as a visual essay, situating a building within its historical, formal and ideological context.\n\nOur group worked on Le Corbusier's villas of the 1920s, exploring the dialectic between his theoretical models - the Maison Dom-Ino and the Maison Citrohan - and their material realisation in built works. Through the analysis of the Villa Stein-de Monzie and the Villa Baizeau, and through the lens of Le Corbusier's own Four Compositions diagram, the essay traces how abstract structural principles found spatial and sensory form. The accompanying text of 1,500 words develops this argument in parallel.",
 };
+
+// ── DUMP WINDOW ───────────────────────────────────────────────
+function DumpWindow({ win, closeWindow, bringToFront, openViewer }) {
+  const W = Math.round(window.innerWidth * 0.8);
+  const H = Math.round(window.innerHeight * 0.8);
+  const left = Math.round((window.innerWidth - W) / 2);
+  const top  = Math.round((window.innerHeight - H) / 2 - 30);
+
+  const files = (FOLDERS.dump.files || []);
+
+  // Positions initiales aléatoires — calculées une seule fois à l'ouverture
+  const initPositions = useRef(null);
+  if (!initPositions.current) {
+    initPositions.current = files.map((f, i) => {
+      const seed = f.name.split("").reduce((a,c) => a + c.charCodeAt(0), i * 37);
+      return {
+        x: 60 + (seed * 137) % (W - 200),
+        y: 60 + (seed * 97)  % (H - 220),
+        rot: ((seed % 21) - 10),
+      };
+    });
+  }
+
+  const [positions, setPositions] = useState(initPositions.current);
+  const [scale, setScale] = useState(1);
+  const [pan, setPan] = useState({ x:0, y:0 });
+  const panRef = useRef(null);
+  const canvasRef = useRef(null);
+
+  // Zoom trackpad
+  const onWheel = (e) => {
+    e.preventDefault();
+    if (e.ctrlKey) {
+      setScale(s => Math.min(3, Math.max(0.3, s * (1 - e.deltaY * 0.01))));
+    } else {
+      setPan(p => ({ x: p.x - e.deltaX, y: p.y - e.deltaY }));
+    }
+  };
+
+  // Drag d'un fichier individuel
+  const onFileMouseDown = (e, idx) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const origX = positions[idx].x;
+    const origY = positions[idx].y;
+    const onMove = (ev) => {
+      const dx = (ev.clientX - startX) / scale;
+      const dy = (ev.clientY - startY) / scale;
+      setPositions(ps => ps.map((p, i) => i === idx ? { ...p, x: origX + dx, y: origY + dy } : p));
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  };
+
+  return (
+    <div onMouseDown={() => bringToFront(win.id)} style={{ position:"absolute", left, top, width:W, height:H, display:"flex", flexDirection:"column", zIndex:win.zIndex, overflow:"hidden", pointerEvents:"auto", border:"1.25px solid #a21c26", borderRadius:4, background:"#fff" }}>
+      {/* Barre */}
+      <div style={{ height:38, flexShrink:0, background:"#fff", borderBottom:"1.25px solid #a21c26", display:"flex", alignItems:"center", padding:"0 8px", gap:7, position:"relative" }}>
+        <BtnClose onClick={() => closeWindow(win.id)} />
+        <span style={{ position:"absolute", right:12, fontFamily:"'IBM Plex Mono',monospace", fontSize:13, fontWeight:700, letterSpacing:1.5, color:"#a21c26" }}>DUMP</span>
+      </div>
+      {/* Canvas zoomable */}
+      <div
+        ref={canvasRef}
+        onWheel={onWheel}
+        style={{ flex:1, overflow:"hidden", position:"relative", cursor:"default" }}
+      >
+        <div style={{ position:"absolute", inset:0, transform:`translate(${pan.x}px,${pan.y}px) scale(${scale})`, transformOrigin:"0 0" }}>
+          {files.map((f, i) => {
+            const pos = positions[i] || { x:60+i*30, y:60+i*20, rot:0 };
+            const isImg = ["JPG","PNG","JPEG"].includes(f.ext.toUpperCase());
+            const thumbSrc = isImg ? getImageSrc(f.name) : null;
+            return (
+              <div
+                key={i}
+                onMouseDown={(e) => onFileMouseDown(e, i)}
+                onClick={() => openViewer("dump", "dump", "DUMP", i)}
+                style={{ position:"absolute", left:pos.x, top:pos.y, transform:`rotate(${pos.rot}deg)`, cursor:"grab", userSelect:"none", display:"flex", flexDirection:"column", alignItems:"center", width:120 }}
+              >
+                {thumbSrc
+                  ? <img src={thumbSrc} draggable="false" style={{ width:108, height:130, objectFit:"cover", display:"block", border:"1px solid #e8d0d0" }}/>
+                  : <FileIcon ext={f.ext} w={108} h={130}/>
+                }
+                <div style={{ fontSize:9, fontWeight:500, color:"#a21c26", marginTop:6, fontFamily:"'IBM Plex Mono',monospace", letterSpacing:1, maxWidth:108, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"center" }}>{f.name}</div>
+              </div>
+            );
+          })}
+          {files.length === 0 && (
+            <div style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", color:"#e8b4b4", fontFamily:"'IBM Plex Mono',monospace", fontSize:11, letterSpacing:2 }}>EMPTY</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── TEXT WINDOW ───────────────────────────────────────────────
 function TextWindow({ win, folder, closeWindow, bringToFront, openDossier, openProjet, setWindows }) {
@@ -995,6 +1113,18 @@ function App() {
             const proj = win.projId ? getProj(win.projId) : null;
 
             if (win.type === "dossier") {
+              if (win.folderId === "dump") {
+                return (
+                  <div key={win.id} style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex: win.zIndex }}>
+                    <DumpWindow
+                      win={win}
+                      closeWindow={closeWindow}
+                      bringToFront={bringToFront}
+                      openViewer={openViewer}
+                    />
+                  </div>
+                );
+              }
               return (
                 <div key={win.id} style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex: win.zIndex }}>
                   <Window
