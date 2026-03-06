@@ -749,7 +749,8 @@ function TextWindow({ win, folder, closeWindow, bringToFront, openDossier, openP
   const [text, setText] = useState(null);
 
   useEffect(() => {
-    const url = `https://raw.githubusercontent.com/kselaven-del/portfolio-architecture/main/${win.projId.toUpperCase()}.description.txt`;
+    const base = `https://raw.githubusercontent.com/kselaven-del/portfolio-architecture/main/${win.projId.toUpperCase()}.description.txt`;
+    const url = `https://corsproxy.io/?url=${encodeURIComponent(base)}`;
     fetch(url, { cache: "no-cache" })
       .then(r => r.ok ? r.text() : Promise.reject(r.status))
       .then(t => setText(t.trim()))
