@@ -498,11 +498,13 @@ const PROJECTS = {
     {name:"BUR.Interior.jpg", ext:"JPG"},
     {name:"MEP.Interior-model-1.jpg", ext:"JPG"},
     {name:"MEP.Interior-model-2.jpg", ext:"JPG"},
+    {name:"AR00.description.txt", ext:"TXT"},
   ]},
   ar02:{ label:"AR02 — THE REAL BOOK", files:[
     {name:"TRB_1.jpg", ext:"JPG"},
     {name:"TRB_2.jpg", ext:"JPG"},
     {name:"TRB_3.jpg", ext:"JPG"},
+    {name:"AR02.description.txt", ext:"TXT"},
   ]},
   ar09:{ label:"AR09 — BURTIGNY", files:[
     {name:"BUR.Interior.jpg", ext:"JPG"},
@@ -514,6 +516,7 @@ const PROJECTS = {
     {name:"BUR.Plan-GF.jpg", ext:"JPG"},
     {name:"BUR.Section-1.jpg", ext:"JPG"},
     {name:"BUR.Section-2.jpg", ext:"JPG"},
+    {name:"AR09.description.txt", ext:"TXT"},
   ]},
   ar10:{ label:"AR10 — STAGE DMA", files:[
     {name:"DMA.Savigny.Collage-1.png", ext:"PNG"},
@@ -523,6 +526,7 @@ const PROJECTS = {
     {name:"DMA.Corbeil.Elevation.png", ext:"PNG"},
     {name:"DMA.Corbeil.Plan-F1.png", ext:"PNG"},
     {name:"DMA.Corbeil.Plan-F2.png", ext:"PNG"},
+    {name:"AR10.description.txt", ext:"TXT"},
   ]},
   ar11:{ label:"AR11 — AFTER THE APOCALYPSE", files:[
     {name:"ATA.Model.cc.jpg", ext:"JPG"},
@@ -548,6 +552,7 @@ const PROJECTS = {
     {name:"ATA.Handdrawing-18.png", ext:"PNG"},
     {name:"ATA.Site-Plan.jpg", ext:"JPG"},
     {name:"ATA.Site-Section.png", ext:"PNG"},
+    {name:"AR11.description.txt", ext:"TXT"},
   ]},
   ar12:{ label:"AR12 — CONSTRUCTING THE VIEW", files:[
     {name:"CTV.C4D-Render-1.jpg", ext:"JPG"},
@@ -558,6 +563,7 @@ const PROJECTS = {
     {name:"CTV.Montage-2.jpg", ext:"JPG"},
     {name:"CTV.Montage-3.jpg", ext:"JPG"},
     {name:"CTV.Montage-4.jpg", ext:"JPG"},
+    {name:"AR12.description.txt", ext:"TXT"},
   ]},
   ar13:{ label:"AR13 — MAGMA ET PRINCIPES", files:[
     {name:"MEP.Interior-model-1.jpg", ext:"JPG"},
@@ -566,6 +572,7 @@ const PROJECTS = {
     {name:"MEP.Axon.Film.jpg", ext:"JPG"},
     {name:"MEP.Detail.Casa-Molino.jpg", ext:"JPG"},
     {name:"MEP.Detail.Film.jpg", ext:"JPG"},
+    {name:"AR13.description.txt", ext:"TXT"},
   ]},
   ar14:{ label:"AR14 — FONDAZIONE BERIO", files:[
     {name:"FDB.Collage.Archives.jpg", ext:"JPG"},
@@ -578,10 +585,12 @@ const PROJECTS = {
     {name:"FDB.Plan-1.jpg", ext:"JPG"},
     {name:"FDB.Plan-2.jpg", ext:"JPG"},
     {name:"FDB.Section.jpg", ext:"JPG"},
+    {name:"AR14.description.txt", ext:"TXT"},
   ]},
   ar15:{ label:"AR15 — SUPERSTUDIO", files:[
     {name:"SPS.Analogous-map.jpg", ext:"JPG"},
     {name:"SPS.Index.jpg", ext:"JPG"},
+    {name:"AR15.description.txt", ext:"TXT"},
   ]},
   _def:{ label:"Projet", files:[
     {name:"Plan.JPG", ext:"JPG"}, {name:"Facade.JPG", ext:"JPG"},
@@ -738,7 +747,7 @@ const Breadcrumb = ({ parts }) => (
 // ── TEXT WINDOW ───────────────────────────────────────────────
 function TextWindow({ win, folder, closeWindow, bringToFront, openDossier, openProjet, setWindows }) {
   const [text, setText] = useState(null);
-  const descUrl = `https://raw.githubusercontent.com/kselaven-del/portfolio-architecture/main/${win.projId.toUpperCase()}.description.txt`;
+  const descUrl = `https://cdn.jsdelivr.net/gh/kselaven-del/portfolio-architecture@main/${win.projId.toUpperCase()}.description.txt`;
 
   useEffect(() => {
     fetch(descUrl)
@@ -1044,6 +1053,7 @@ function App() {
                       {proj.files.map((f, i) => {
                         const isImg = ["JPG","PNG","JPEG"].includes(f.ext.toUpperCase());
                         const isPdf = f.ext.toUpperCase() === "PDF";
+                        const isTxt = f.ext.toUpperCase() === "TXT";
                         const thumbSrc = isImg ? getImageSrc(f.name) + "?w=80" : null;
                         const isDump = win.folderId === "dump";
                         const seed = f.name.split("").reduce((a,c) => a + c.charCodeAt(0), 0);
@@ -1054,6 +1064,11 @@ function App() {
                           <div key={i}
                             onClick={() => {
                               if (isPdf) { window.open(getImageSrc(f.name) || `https://raw.githubusercontent.com/kselaven-del/portfolio-architecture/main/${encodeURIComponent(f.name)}`, "_blank"); }
+                              else if (isTxt) {
+                                const existing = windows.find(w => w.type === "texte" && w.projId === win.projId);
+                                if (existing) { bringToFront(existing.id); }
+                                else { nextZ++; nextId++; setWindows(ws => [...ws, { id: nextId, type:"texte", folderId: win.folderId, projId: win.projId, projName: win.projName, zIndex: nextZ }]); }
+                              }
                               else { openViewer(win.folderId, win.projId, win.projName, i); }
                             }}
                             style={{ display:"flex", flexDirection:"column", alignItems:"center", cursor:"pointer", padding:4, transform: `rotate(${rot}deg) translate(${tx}px,${ty}px)`, transition:"transform 0.15s", zIndex: isDump ? seed % 5 : "auto", position: isDump ? "relative" : "static" }}
