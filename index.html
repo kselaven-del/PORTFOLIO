@@ -735,6 +735,50 @@ const Breadcrumb = ({ parts }) => (
 );
 
 // ── MAIN APP ──────────────────────────────────────────────────
+// ── TEXT WINDOW ───────────────────────────────────────────────
+function TextWindow({ win, folder, closeWindow, bringToFront, openDossier, openProjet, setWindows }) {
+  const [text, setText] = useState(null);
+  const descUrl = `https://raw.githubusercontent.com/kselaven-del/portfolio-architecture/main/${win.projId.toUpperCase()}.description.txt`;
+
+  useEffect(() => {
+    fetch(descUrl)
+      .then(r => r.ok ? r.text() : null)
+      .then(t => setText(t))
+      .catch(() => setText(null));
+  }, [descUrl]);
+
+  const PROJ_W = 640, PROJ_TOP = 42, PROJ_LEFT = 52, PROJ_H = 410;
+  const W = 380, H = 260;
+  const left = PROJ_LEFT;
+  const top  = PROJ_TOP + PROJ_H + 8;
+
+  return (
+    <Window
+      title={win.projName}
+      style={{ left: left + "px", top: top + "px", width: W + "px", height: H + "px", zIndex: win.zIndex }}
+      onClose={() => closeWindow(win.id)}
+      onMouseDownCapture={() => bringToFront(win.id)}
+      breadcrumb={
+        <Breadcrumb parts={[
+          { label:"Bureau", onClick:() => setWindows([]) },
+          { label: folder.label, onClick:() => openDossier(win.folderId) },
+          { label: win.projName, onClick:() => openProjet(win.folderId, win.projId, win.projName) },
+          { label: "description.txt" },
+        ]}/>
+      }
+    >
+      <div style={{ padding:"0 16px 16px", fontSize:10.5, lineHeight:1.7, color:"#1a1a1a", fontFamily:"'IBM Plex Mono', monospace", whiteSpace:"pre-wrap" }}>
+        {text === null
+          ? <span style={{ color:"#c97a7a" }}>Chargement...</span>
+          : text === ""
+          ? <span style={{ color:"#c97a7a" }}>Aucune description disponible.</span>
+          : text
+        }
+      </div>
+    </Window>
+  );
+}
+
 // ── ADAPTIVE VIEWER WINDOW ────────────────────────────────────
 function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bringToFront, openDossier, openProjet, setFs, navigate, setWindows }) {
   const BAR_H = 38;
@@ -852,7 +896,13 @@ function App() {
     const existing = windows.find(w => w.type === "projet" && w.projId === projId);
     if (existing) { bringToFront(existing.id); return; }
     nextZ++; nextId++;
-    setWindows(ws => [...ws, { id: nextId, type:"projet", folderId, projId, projName, zIndex: nextZ }]);
+    const projWinId = nextId;
+    nextZ++; nextId++;
+    const txtWinId = nextId;
+    setWindows(ws => [...ws,
+      { id: projWinId, type:"projet", folderId, projId, projName, zIndex: nextZ - 1 },
+      { id: txtWinId,  type:"texte",  folderId, projId, projName, zIndex: nextZ },
+    ]);
   };
 
   const openViewer = (folderId, projId, projName, fileIdx) => {
@@ -1027,6 +1077,22 @@ function App() {
                       })}
                     </div>
                   </Window>
+                </div>
+              );
+            }
+
+            if (win.type === "texte") {
+              return (
+                <div key={win.id} style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex: win.zIndex }}>
+                  <TextWindow
+                    win={win}
+                    folder={folder}
+                    closeWindow={closeWindow}
+                    bringToFront={bringToFront}
+                    openDossier={openDossier}
+                    openProjet={openProjet}
+                    setWindows={setWindows}
+                  />
                 </div>
               );
             }
