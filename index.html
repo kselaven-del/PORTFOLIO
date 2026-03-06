@@ -493,9 +493,9 @@ const FOLDERS = {
 
 const PROJECTS = {
   ar00:{ label:"AR00 — INTERIOR MODELS", files:[
-    {name:"BUR.Interior.pdf", ext:"PDF"},
-    {name:"IM.Karl-Marx Hof.pdf", ext:"PDF"},
+    {name:"IM.Karl-Marx Hof.jpg", ext:"JPG"},
     {name:"IM.Wooden hall.jpg", ext:"JPG"},
+    {name:"BUR.Interior.jpg", ext:"JPG"},
   ]},
   ar02:{ label:"AR02 — THE REAL BOOK", files:[
     {name:"TRB_1.jpg", ext:"JPG"},
@@ -503,26 +503,30 @@ const PROJECTS = {
     {name:"TRB_3.jpg", ext:"JPG"},
   ]},
   ar09:{ label:"AR09 — BURTIGNY", files:[
-    {name:"BUR.Constructive section.pdf", ext:"PDF"},
+    {name:"BUR.Interior.jpg", ext:"JPG"},
+    {name:"BUR.Constructive section.jpg", ext:"JPG"},
     {name:"BUR.Elevation-2.png", ext:"PNG"},
     {name:"BUR.Elevations-1.png", ext:"PNG"},
-    {name:"BUR.Interior.pdf", ext:"PDF"},
-    {name:"BUR.Plan-F1.pdf", ext:"PDF"},
-    {name:"BUR.Plan-F2.pdf", ext:"PDF"},
-    {name:"BUR.Plan-GF.pdf", ext:"PDF"},
-    {name:"BUR.Section-1.pdf", ext:"PDF"},
-    {name:"BUR.Section-2.pdf", ext:"PDF"},
+    {name:"BUR.Plan-F1.jpg", ext:"JPG"},
+    {name:"BUR.Plan-F2.jpg", ext:"JPG"},
+    {name:"BUR.Plan-GF.jpg", ext:"JPG"},
+    {name:"BUR.Section-1.jpg", ext:"JPG"},
+    {name:"BUR.Section-2.jpg", ext:"JPG"},
   ]},
   ar10:{ label:"AR10 — STAGE DMA", files:[
-    {name:"DMA.Corbeil.Elevation.png", ext:"PNG"},
-    {name:"DMA.Corbeil.Model.png", ext:"PNG"},
-    {name:"DMA.Corbeil.Plan-F1.png", ext:"PNG"},
-    {name:"DMA.Corbeil.Plan-F2.png", ext:"PNG"},
     {name:"DMA.Savigny.Collage-1.png", ext:"PNG"},
     {name:"DMA.Savigny.Collage-2.png", ext:"PNG"},
     {name:"LAMOUR.png", ext:"PNG"},
+    {name:"DMA.Corbeil.Model.png", ext:"PNG"},
+    {name:"DMA.Corbeil.Elevation.png", ext:"PNG"},
+    {name:"DMA.Corbeil.Plan-F1.png", ext:"PNG"},
+    {name:"DMA.Corbeil.Plan-F2.png", ext:"PNG"},
   ]},
   ar11:{ label:"AR11 — AFTER THE APOCALYPSE", files:[
+    {name:"ATA.Model.cc.jpg", ext:"JPG"},
+    {name:"ATA.Model.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-19.png", ext:"PNG"},
+    {name:"ATA.Handdrawing-20.png", ext:"PNG"},
     {name:"ATA.Handdrawing-1.png", ext:"PNG"},
     {name:"ATA.Handdrawing-2.png", ext:"PNG"},
     {name:"ATA.Handdrawing-3.png", ext:"PNG"},
@@ -541,10 +545,6 @@ const PROJECTS = {
     {name:"ATA.Handdrawing-16.png", ext:"PNG"},
     {name:"ATA.Handdrawing-17.png", ext:"PNG"},
     {name:"ATA.Handdrawing-18.png", ext:"PNG"},
-    {name:"ATA.Handdrawing-19.png", ext:"PNG"},
-    {name:"ATA.Handdrawing-20.png", ext:"PNG"},
-    {name:"ATA.Model.cc.jpg", ext:"JPG"},
-    {name:"ATA.Model.png", ext:"PNG"},
     {name:"ATA.Site-Plan.jpg", ext:"JPG"},
     {name:"ATA.Site-Plan.png", ext:"PNG"},
     {name:"ATA.Site-Section.png", ext:"PNG"},
@@ -558,12 +558,12 @@ const PROJECTS = {
     {name:"CTV.Montage-4.jpg", ext:"JPG"},
   ]},
   ar13:{ label:"AR13 — MAGMA ET PRINCIPES", files:[
-    {name:"MEP.Axon.Casa-Molino.pdf", ext:"PDF"},
-    {name:"MEP.Axon.Film.pdf", ext:"PDF"},
-    {name:"MEP.Detail.Casa-Molino.pdf", ext:"PDF"},
-    {name:"MEP.Detail.Film.pdf", ext:"PDF"},
     {name:"MEP.Interior-model-1.jpg", ext:"JPG"},
     {name:"MEP.Interior-model-2.jpg", ext:"JPG"},
+    {name:"MEP.Axon.Casa-Molino.jpg", ext:"JPG"},
+    {name:"MEP.Axon.Film.jpg", ext:"JPG"},
+    {name:"MEP.Detail.Casa-Molino.jpg", ext:"JPG"},
+    {name:"MEP.Detail.Film.jpg", ext:"JPG"},
   ]},
   ar14:{ label:"AR14 — FONDAZIONE BERIO", files:[
     {name:"FDB.Collage.Archives.jpg", ext:"JPG"},
@@ -573,17 +573,17 @@ const PROJECTS = {
     {name:"FDB.Collage.Parc.jpg", ext:"JPG"},
     {name:"FDB.Collage.Place.cc.jpeg", ext:"JPG"},
     {name:"FDB.Model.cc.jpg", ext:"JPG"},
-    {name:"FDB.Plan-1.pdf", ext:"PDF"},
-    {name:"FDB.Plan-2.pdf", ext:"PDF"},
-    {name:"FDB.Section.pdf", ext:"PDF"},
+    {name:"FDB.Plan-1.jpg", ext:"JPG"},
+    {name:"FDB.Plan-2.jpg", ext:"JPG"},
+    {name:"FDB.Section.jpg", ext:"JPG"},
   ]},
   ar15:{ label:"AR15 — SUPERSTUDIO", files:[
-    {name:"SPS.Analogous-map.pdf", ext:"PDF"},
-    {name:"SPS.Index.pdf", ext:"PDF"},
+    {name:"SPS.Analogous-map.jpg", ext:"JPG"},
+    {name:"SPS.Index.jpg", ext:"JPG"},
   ]},
   _def:{ label:"Projet", files:[
     {name:"Plan.JPG", ext:"JPG"}, {name:"Facade.JPG", ext:"JPG"},
-    {name:"Coupe.JPG", ext:"JPG"}, {name:"Site.PDF", ext:"PDF"},
+    {name:"Coupe.JPG", ext:"JPG"},
   ]},
 };
 const getProj = id => PROJECTS[id] || PROJECTS._def;
@@ -596,7 +596,7 @@ const S = {
   desktop:{ flex:1, position:"relative", overflow:"hidden", background:"#f5f4f4" },
   deskIcon:{ position:"absolute", display:"flex", flexDirection:"column", alignItems:"center", textTransform:"uppercase", cursor:"pointer" },
   deskLabel:{ marginTop:14, fontFamily:"inherit", fontSize:13, fontWeight:700, letterSpacing:2, color:"#a21c26", textAlign:"center", maxWidth:"160px", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" },
-  winWrap:{ position:"absolute", display:"flex", flexDirection:"column", zIndex:10, minWidth:280, minHeight:180, pointerEvents:"auto", boxShadow:"2px 2px 8px rgba(162,28,38,0.12)", overflow:"hidden" },
+  winWrap:{ position:"absolute", display:"flex", flexDirection:"column", zIndex:10, minWidth:280, minHeight:180, pointerEvents:"auto", filter:"drop-shadow(2px 2px 0px rgba(162,28,38,0.10))", overflow:"hidden" },
   winBar:{ height:38, flexShrink:0, background:"#fff", border:"1.25px solid #a21c26", borderBottom:"1.25px solid #a21c26", borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", padding:"0 8px", gap:7, cursor:"grab", position:"relative" },
   winBarTitle:{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", fontSize:13, fontWeight:700, letterSpacing:1.5, color:"#a21c26", pointerEvents:"none", whiteSpace:"nowrap", overflow:"hidden", maxWidth:"55%" },
   winBody:{ flex:1, background:"#fff", border:"1.25px solid #a21c26", borderTop:"none", borderRadius:"0 0 4px 4px", display:"flex", flexDirection:"column", overflow:"hidden", boxShadow:"none", position:"relative" },
@@ -777,7 +777,7 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
   };
 
   return (
-    <div onMouseDown={() => bringToFront(win.id)} style={{ position:"absolute", left: pos.left + "px", top: pos.top + "px", width: W + "px", height: H + "px", display:"flex", flexDirection:"column", zIndex: win.zIndex, boxShadow:"2px 2px 8px rgba(162,28,38,0.12)", overflow:"hidden", pointerEvents:"auto" }}>
+    <div onMouseDown={() => bringToFront(win.id)} style={{ position:"absolute", left: pos.left + "px", top: pos.top + "px", width: W + "px", height: H + "px", display:"flex", flexDirection:"column", zIndex: win.zIndex, filter:"drop-shadow(2px 2px 0px rgba(162,28,38,0.10))", overflow:"hidden", pointerEvents:"auto" }}>
       {/* Bar */}
       <div onMouseDown={onBarMouseDown} style={{ height:BAR_H, flexShrink:0, background:"#fff", border:"1.25px solid #a21c26", borderBottom:"1.25px solid #a21c26", borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", padding:"0 8px", gap:7, cursor:"grab", position:"relative", userSelect:"none" }}>
         <BtnClose onClick={() => closeWindow(win.id)} />
