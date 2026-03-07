@@ -919,7 +919,13 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const rawLeft = 260 + (win.offsetX || 0);
+  // Projet window: left=52px, width=640px → right edge at ~692px
+  const PROJ_RIGHT = 52 + 640 + 16; // ~708px
+  const canFitRight = PROJ_RIGHT + W + 8 <= vw;
+  const baseLeft = canFitRight
+    ? PROJ_RIGHT + (win.offsetX || 0)   // à droite du projet
+    : 260 + (win.offsetX || 0);          // ancien comportement (superposé)
+  const rawLeft = baseLeft;
   const rawTop = 8 + (win.offsetY || 0);
   const left = Math.max(4, Math.min(rawLeft, vw - W - 8));
   const top = Math.max(0, Math.min(rawTop, vh - HEADER_H - H - 16));
