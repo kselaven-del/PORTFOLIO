@@ -1300,21 +1300,20 @@ function App() {
                 setWindows(ws => ws.map(w => w.id === win.id ? { ...w, fileIdx: newIdx } : w));
               };
               return (
-                <div key={win.id} style={{ position:"absolute", inset:0, pointerEvents:"none", zIndex: win.zIndex }}>
-                  <AdaptiveViewerWindow
-                    win={win}
-                    currentFile={currentFile}
-                    proj={proj}
-                    folder={folder}
-                    closeWindow={closeWindow}
-                    bringToFront={bringToFront}
-                    openDossier={openDossier}
-                    openProjet={openProjet}
-                    setFs={setFs}
-                    navigate={navigate}
-                    setWindows={setWindows}
-                  />
-                </div>
+                <AdaptiveViewerWindow
+                  key={win.id}
+                  win={win}
+                  currentFile={currentFile}
+                  proj={proj}
+                  folder={folder}
+                  closeWindow={closeWindow}
+                  bringToFront={bringToFront}
+                  openDossier={openDossier}
+                  openProjet={openProjet}
+                  setFs={setFs}
+                  navigate={navigate}
+                  setWindows={setWindows}
+                />
               );
             }
 
@@ -1383,9 +1382,9 @@ function App() {
         );
       })()}
       {/* Poignées resize */}
-      <div onMouseDown={e => onResizeMouseDown(e, "s")}  style={{ position:"absolute", bottom:-4, left:8, right:8, height:10, cursor:"s-resize", zIndex:1000, background:"rgba(255,0,0,0.3)" }}/>
-      <div onMouseDown={e => onResizeMouseDown(e, "e")}  style={{ position:"absolute", right:-4, top:8, bottom:8, width:10, cursor:"e-resize", zIndex:1000, background:"rgba(0,255,0,0.3)" }}/>
-      <div onMouseDown={e => onResizeMouseDown(e, "se")} style={{ position:"absolute", bottom:-4, right:-4, width:16, height:16, cursor:"se-resize", zIndex:1001, background:"rgba(0,0,255,0.3)" }}/>
+      <div onMouseDown={e => onResizeMouseDown(e, "s")}  style={{ position:"absolute", bottom:-5, left:0, right:0, height:10, cursor:"s-resize", zIndex:1000, background:"rgba(255,0,0,0.4)" }}/>
+      <div onMouseDown={e => onResizeMouseDown(e, "e")}  style={{ position:"absolute", right:-5, top:0, bottom:0, width:10, cursor:"e-resize", zIndex:1000, background:"rgba(0,200,0,0.4)" }}/>
+      <div onMouseDown={e => onResizeMouseDown(e, "se")} style={{ position:"absolute", bottom:-5, right:-5, width:18, height:18, cursor:"se-resize", zIndex:1001, background:"rgba(0,0,255,0.4)" }}/>
     </div>
   );
 }
