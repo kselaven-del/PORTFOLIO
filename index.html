@@ -919,19 +919,20 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  // Projet window: left=52px, width=640px → right edge at ~692px
-  const PROJ_RIGHT = 52 + 640 + 16; // ~708px
+  const PROJ_RIGHT = 52 + 640 + 16;
   const canFitRight = PROJ_RIGHT + W + 8 <= vw;
   const baseLeft = canFitRight
-    ? PROJ_RIGHT + (win.offsetX || 0)   // à droite du projet
-    : 260 + (win.offsetX || 0);          // ancien comportement (superposé)
+    ? PROJ_RIGHT + (win.offsetX || 0)
+    : 260 + (win.offsetX || 0);
   const rawLeft = baseLeft;
   const rawTop = 8 + (win.offsetY || 0);
   const left = Math.max(4, Math.min(rawLeft, vw - W - 8));
   const top = Math.max(0, Math.min(rawTop, vh - HEADER_H - H - 16));
 
   const [pos, setPos] = useState({ left, top });
+  const [size, setSize] = useState({ w: W, h: H });
   const dragRef = useRef(null);
+  const resizeRef = useRef(null);
 
   const onBarMouseDown = e => {
     if (e.target.closest("[data-btn]")) return;
@@ -941,7 +942,6 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
     dragRef.current = { ox: e.clientX - pos.left, oy: e.clientY - pos.top };
     const onMove = ev => {
       if (!dragRef.current) return;
-      const container = ev.target.closest ? document.querySelector('[data-desktop]') : null;
       setPos({ left: Math.max(0, ev.clientX - dragRef.current.ox), top: Math.max(0, ev.clientY - dragRef.current.oy - HEADER_H) });
     };
     const onUp = () => {
@@ -954,8 +954,34 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
     window.addEventListener("mouseup", onUp);
   };
 
+  const onResizeMouseDown = (e, dir) => {
+    e.preventDefault();
+    e.stopPropagation();
+    bringToFront(win.id);
+    document.body.style.userSelect = "none";
+    resizeRef.current = { sx: e.clientX, sy: e.clientY, sw: size.w, sh: size.h, dir };
+    const onMove = ev => {
+      if (!resizeRef.current) return;
+      const { sx, sy, sw, sh, dir } = resizeRef.current;
+      const dx = ev.clientX - sx;
+      const dy = ev.clientY - sy;
+      setSize({
+        w: dir !== "s" ? Math.max(260, sw + dx) : sw,
+        h: dir !== "e" ? Math.max(180, sh + dy) : sh,
+      });
+    };
+    const onUp = () => {
+      resizeRef.current = null;
+      document.body.style.userSelect = "";
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  };
+
   return (
-    <div onMouseDown={() => bringToFront(win.id)} style={{ position:"absolute", left: pos.left + "px", top: pos.top + "px", width: W + "px", height: H + "px", display:"flex", flexDirection:"column", zIndex: win.zIndex, overflow:"hidden", pointerEvents:"auto" }}>
+    <div onMouseDown={() => bringToFront(win.id)} style={{ position:"absolute", left: pos.left + "px", top: pos.top + "px", width: size.w + "px", height: size.h + "px", display:"flex", flexDirection:"column", zIndex: win.zIndex, overflow:"hidden", pointerEvents:"auto" }}>
       {/* Bar */}
       <div onMouseDown={onBarMouseDown} style={{ height:BAR_H, flexShrink:0, background:"#fff", border:"1.25px solid #a21c26", borderBottom:"1.25px solid #a21c26", borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", padding:"0 8px", gap:7, cursor:"grab", position:"relative", userSelect:"none" }}>
         <BtnClose onClick={() => closeWindow(win.id)} />
@@ -1015,7 +1041,15 @@ function App() {
     setWindows(ws => ws.map(w => w.id === id ? { ...w, zIndex: z } : w));
   };
 
-  const closeWindow = id => setWindows(ws => ws.filter(w => w.id !== id));
+  const closeWindow = id => setWindows(ws => {
+    const closing = ws.find(w => w.id === id);
+    return ws.filter(w => {
+      if (w.id === id) return false;
+      // Si on ferme un projet, fermer aussi sa texte window
+      if (closing?.type === "projet" && w.type === "texte" && w.projId === closing.projId) return false;
+      return true;
+    });
+  });
 
   const openDossier = folderId => {
     const existing = windows.find(w => w.type === "dossier" && w.folderId === folderId);
@@ -1119,7 +1153,7 @@ function App() {
             <DumpSVG w={175} h={230} sw={1.25}/><div style={S.deskLabel}>DUMP</div>
           </div>
 
-          {windows.length > 0 && (
+          {windows.length > 0 && !fs && (
             <div
               onClick={() => setWindows([])}
               style={{ position:"fixed", bottom:18, left:20, display:"flex", alignItems:"center", gap:10, cursor:"pointer", zIndex:99999, pointerEvents:"auto", userSelect:"none", background:"#fff", padding:"6px 12px 6px 8px" }}
@@ -1348,6 +1382,10 @@ function App() {
           </div>
         );
       })()}
+      {/* Poignées resize */}
+      <div onMouseDown={e => onResizeMouseDown(e, "s")}  style={{ position:"absolute", bottom:0, left:8, right:8, height:6, cursor:"s-resize", zIndex:10 }}/>
+      <div onMouseDown={e => onResizeMouseDown(e, "e")}  style={{ position:"absolute", right:0, top:8, bottom:8, width:6, cursor:"e-resize", zIndex:10 }}/>
+      <div onMouseDown={e => onResizeMouseDown(e, "se")} style={{ position:"absolute", bottom:0, right:0, width:14, height:14, cursor:"se-resize", zIndex:11 }}/>
     </div>
   );
 }
