@@ -981,7 +981,7 @@ function AdaptiveViewerWindow({ win, currentFile, proj, folder, closeWindow, bri
   };
 
   return (
-    <div onMouseDown={() => bringToFront(win.id)} style={{ position:"absolute", left: pos.left + "px", top: pos.top + "px", width: size.w + "px", height: size.h + "px", display:"flex", flexDirection:"column", zIndex: win.zIndex, overflow:"hidden", pointerEvents:"auto" }}>
+    <div onMouseDown={() => bringToFront(win.id)} style={{ position:"absolute", left: pos.left + "px", top: pos.top + "px", width: size.w + "px", height: size.h + "px", display:"flex", flexDirection:"column", zIndex: win.zIndex, pointerEvents:"auto" }}>
       {/* Bar */}
       <div onMouseDown={onBarMouseDown} style={{ height:BAR_H, flexShrink:0, background:"#fff", border:"1.25px solid #a21c26", borderBottom:"1.25px solid #a21c26", borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", padding:"0 8px", gap:7, cursor:"grab", position:"relative", userSelect:"none" }}>
         <BtnClose onClick={() => closeWindow(win.id)} />
@@ -1383,9 +1383,9 @@ function App() {
         );
       })()}
       {/* Poignées resize */}
-      <div onMouseDown={e => onResizeMouseDown(e, "s")}  style={{ position:"absolute", bottom:0, left:8, right:8, height:6, cursor:"s-resize", zIndex:10 }}/>
-      <div onMouseDown={e => onResizeMouseDown(e, "e")}  style={{ position:"absolute", right:0, top:8, bottom:8, width:6, cursor:"e-resize", zIndex:10 }}/>
-      <div onMouseDown={e => onResizeMouseDown(e, "se")} style={{ position:"absolute", bottom:0, right:0, width:14, height:14, cursor:"se-resize", zIndex:11 }}/>
+      <div onMouseDown={e => onResizeMouseDown(e, "s")}  style={{ position:"absolute", bottom:-4, left:8, right:8, height:10, cursor:"s-resize", zIndex:10, background:"rgba(255,0,0,0.3)" }}/>
+      <div onMouseDown={e => onResizeMouseDown(e, "e")}  style={{ position:"absolute", right:-4, top:8, bottom:8, width:10, cursor:"e-resize", zIndex:10, background:"rgba(0,255,0,0.3)" }}/>
+      <div onMouseDown={e => onResizeMouseDown(e, "se")} style={{ position:"absolute", bottom:-4, right:-4, width:16, height:16, cursor:"se-resize", zIndex:11, background:"rgba(0,0,255,0.3)" }}/>
     </div>
   );
 }
