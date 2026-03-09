@@ -290,7 +290,7 @@ function DumpWindow({ win, closeWindow, bringToFront, openViewer }) {
 function TextWindow({ win, closeWindow, bringToFront }) {
   const text = DESCRIPTIONS[win.projId] || "";
   return (
-    <Window title={`${win.projId.toUpperCase()}.description.txt`} style={{ left:"84px", top:"510px", width:"384px", height:"300px", zIndex: win.zIndex }} onClose={() => closeWindow(win.id)} onMouseDownCapture={() => bringToFront(win.id)}>
+    <Window title={`${win.projId.toUpperCase()}.description.txt`} style={{ left:"84px", top:"446px", width:"384px", height:"300px", zIndex: win.zIndex }} onClose={() => closeWindow(win.id)} onMouseDownCapture={() => bringToFront(win.id)}>
       <div style={{ padding:"0 16px 16px", fontSize:12, lineHeight:1.7, color:"#1a1a1a", whiteSpace:"pre-wrap" }}>
         {text || <span style={{ color:"#c97a7a" }}>Aucune description disponible.</span>}
       </div>
@@ -302,70 +302,118 @@ function ViewerWindow({ win, closeWindow, bringToFront, openDossier, openProjet,
   const proj = getProj(win.projId);
   const currentFile = proj.files[win.fileIdx];
   const imgSrc = getImageSrc(currentFile?.name);
-  const FIXED_H = Math.round(window.innerHeight * 0.50);
+  const FIXED_H = Math.round(window.innerHeight * 0.46);
   const defaultW = Math.round(FIXED_H * 1.2);
   const vw = window.innerWidth;
-  const vh = window.innerHeight - 76; // minus header
+  const vh = window.innerHeight - 76;
+  const folder = FOLDERS[win.folderId] || {};
+
   const [pos, setPos] = useState({ left: Math.min(Math.max(4, win.offsetX || 0), vw - defaultW - 4), top: Math.min(Math.max(0, win.offsetY || 0), vh - FIXED_H - 4) });
   const [size, setSize] = useState({ w: defaultW, h: FIXED_H });
   const [ready, setReady] = useState(!imgSrc);
-  const userResized = useRef(false);
-  const folder = FOLDERS[win.folderId] || {};
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const isPanning = useRef(false);
+  const panStart = useRef({ mx: 0, my: 0, px: 0, py: 0 });
+  const imgRatio = useRef(null); // naturalWidth / naturalHeight
+  const sizeRef = useRef(size);
+  sizeRef.current = size;
 
-  useEffect(() => { if (imgSrc) setReady(false); }, [currentFile?.name]);
+  useEffect(() => { if (imgSrc) { setReady(false); setZoom(1); setPan({ x:0, y:0 }); imgRatio.current=null; setSize(s=>({w:s.w,h:s.h,_userResized:false})); } }, [currentFile?.name]);
 
-  const handleImageLoad = useCallback((e) => {
-    if (!userResized.current) {
-      const { naturalWidth, naturalHeight } = e.target;
-      if (naturalWidth && naturalHeight) {
-        const idealW = Math.round((FIXED_H - 80) * naturalWidth / naturalHeight + 32);
-        setSize(s => ({ ...s, w: Math.max(220, Math.min(idealW, vw - 16)) }));
-      }
-    }
-    setReady(true);
-  }, [FIXED_H, vw]);
-
+  // Drag bar to move
   const onBarMouseDown = e => {
     if (e.target.closest("[data-btn]")) return;
     e.preventDefault();
     bringToFront(win.id);
     const startX = e.clientX - pos.left, startY = e.clientY - pos.top;
-    const onMove = ev => setPos({ left: Math.min(Math.max(0, ev.clientX - startX), vw - size.w - 4), top: Math.min(Math.max(0, ev.clientY - startY), vh - size.h - 4) });
+    const onMove = ev => setPos({ left: Math.min(Math.max(0, ev.clientX - startX), vw - sizeRef.current.w - 4), top: Math.min(Math.max(0, ev.clientY - startY), vh - sizeRef.current.h - 4) });
     const onUp = () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+    window.addEventListener("mousemove", onMove); window.addEventListener("mouseup", onUp);
+  };
+
+  // Resize from bottom-right corner
+  const onResizeMouseDown = e => {
+    e.stopPropagation(); e.preventDefault();
+    const startX = e.clientX, startY = e.clientY, startW = size.w, startH = size.h;
+    const onMove = ev => {
+      const ratio = imgRatio.current;
+      const dw = ev.clientX - startX, dh = ev.clientY - startY;
+      if (ratio) {
+        // drive by whichever axis moved more, constrain the other
+        const wByW = Math.max(220, startW + dw);
+        const hByW = Math.round((wByW - 28) / ratio) + 75;
+        const hByH = Math.max(180, startH + dh);
+        const wByH = Math.round((hByH - 75) * ratio) + 28;
+        // pick the larger delta
+        const useW = Math.abs(dw) >= Math.abs(dh);
+        const w = useW ? wByW : Math.max(220, wByH);
+        const h = useW ? Math.max(180, hByW) : hByH;
+        setSize({ w, h, _userResized: true });
+      } else {
+        setSize({ w: Math.max(220, startW + dw), h: Math.max(180, startH + dh), _userResized: true });
+      }
+    };
+    const onUp = () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+    window.addEventListener("mousemove", onMove); window.addEventListener("mouseup", onUp);
+  };
+
+  // Zoom with wheel
+  const onWheel = e => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.1 : 0.9;
+    setZoom(z => Math.min(Math.max(0.5, z * factor), 8));
+  };
+
+  // Pan when zoomed (drag image)
+  const onImgMouseDown = e => {
+    if (zoom <= 1) { navigate(e.shiftKey ? -1 : 1); return; }
+    e.preventDefault();
+    isPanning.current = true;
+    panStart.current = { mx: e.clientX, my: e.clientY, px: pan.x, py: pan.y };
+    const onMove = ev => {
+      if (!isPanning.current) return;
+      setPan({ x: panStart.current.px + ev.clientX - panStart.current.mx, y: panStart.current.py + ev.clientY - panStart.current.my });
+    };
+    const onUp = () => { isPanning.current = false; window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
     window.addEventListener("mousemove", onMove); window.addEventListener("mouseup", onUp);
   };
 
   return (
     <div onMouseDown={() => bringToFront(win.id)} style={{ position:"absolute", left:pos.left, top:pos.top, width:size.w, height:size.h, zIndex:win.zIndex, pointerEvents:"auto", display:"flex", flexDirection:"column", opacity:ready?1:0, transition:ready?"opacity 0.12s ease":"none" }}>
       <div onMouseDown={onBarMouseDown} style={{ height:27, flexShrink:0, background:"#fff", border:"1.25px solid #a21c26", borderBottom:"1.25px solid #a21c26", borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", padding:"0 8px", gap:7, cursor:"grab", position:"relative" }}>
-        <BtnClose onClick={() => closeWindow(win.id)} />
-        <BtnExpand onClick={() => setFs({ projId:win.projId, projName:win.projName, fileIdx:win.fileIdx, folderId:win.folderId })} />
-        <span style={{ position:"absolute", right:10, fontFamily:"'IBM Plex Mono',monospace", fontSize:14, fontWeight:400, fontStyle:"italic", letterSpacing:0.3, color:"#a21c26", whiteSpace:"nowrap", overflow:"hidden", maxWidth:"55%", top:"50%", transform:"translateY(-50%)" }}>{currentFile.name}</span>
+        <BtnClose onClick={() => closeWindow(win.id)} data-btn/>
+        <BtnExpand onClick={() => setFs({ projId:win.projId, projName:win.projName, fileIdx:win.fileIdx, folderId:win.folderId })} data-btn/>
+        <span style={{ position:"absolute", right:10, left:60, fontFamily:"'IBM Plex Mono',monospace", fontSize:14, fontWeight:400, fontStyle:"italic", letterSpacing:0.3, color:"#a21c26", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", top:"50%", transform:"translateY(-50%)", textAlign:"right" }}>{currentFile.name}</span>
       </div>
-      <div style={{ flex:1, minHeight:0, background:"#fff", border:"1.25px solid #a21c26", borderTop:"none", borderRadius:"0 0 4px 4px", display:"flex", flexDirection:"column", overflow:"hidden" }}>
-        <div style={{ height:20, flexShrink:0, display:"flex", alignItems:"center", padding:"4px 12px 0", fontSize:9, fontWeight:700, letterSpacing:1, color:"#c97a7a", overflow:"hidden", whiteSpace:"nowrap" }}>
-          <span style={{ cursor:"pointer" }} onClick={() => openDossier(win.folderId)}>{folder.label}</span>
-          <span style={{ margin:"0 4px", color:"#f0d0d0" }}>›</span>
-          <span style={{ cursor:"pointer" }} onClick={() => openProjet(win.folderId, win.projId, win.projName)}>{win.projName}</span>
-          <span style={{ margin:"0 4px", color:"#f0d0d0" }}>›</span>
-          <span style={{ color:"#a21c26" }}>{currentFile.name}</span>
+      <div style={{ flex:1, minHeight:0, background:"#fff", border:"1.25px solid #a21c26", borderTop:"none", borderRadius:"0 0 4px 4px", display:"flex", flexDirection:"column", overflow:"hidden", position:"relative" }}>
+        <div style={{ height:20, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"flex-end", padding:"4px 12px 0", fontSize:9, fontWeight:700, letterSpacing:1, whiteSpace:"nowrap", overflow:"hidden" }}>
+          <span style={{ color:"#c97a7a", overflow:"hidden", textOverflow:"ellipsis", cursor:"pointer", flexShrink:2, minWidth:0 }} onClick={() => openDossier(win.folderId)}>{folder.label}</span>
+          <span style={{ margin:"0 4px", color:"#f0d0d0", flexShrink:0 }}>›</span>
+          <span style={{ color:"#c97a7a", overflow:"hidden", textOverflow:"ellipsis", cursor:"pointer", flexShrink:1, minWidth:0 }} onClick={() => openProjet(win.folderId, win.projId, win.projName)}>{win.projName}</span>
+          <span style={{ margin:"0 4px", color:"#f0d0d0", flexShrink:0 }}>›</span>
+          <span style={{ color:"#a21c26", flexShrink:0 }}>{currentFile.name}</span>
         </div>
-        <div style={{ flex:1, minHeight:0, display:"flex", alignItems:"center", justifyContent:"center", position:"relative", overflow:"hidden" }}>
-          <div onClick={() => navigate(-1)} style={{ position:"absolute", left:0, top:0, bottom:0, width:16, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", zIndex:2 }}>
-            <svg width="8" height="16" viewBox="0 0 8 16"><polyline points="7,1 1,8 7,15" fill="none" stroke="#c97a7a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </div>
-          <div style={{ position:"absolute", left:16, right:16, top:0, bottom:8, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden" }}>
-            {imgSrc ? (
-              <img key={currentFile.name} src={imgSrc} alt={currentFile.name} draggable="false" onLoad={handleImageLoad} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", display:"block" }}/>
-            ) : (
-              <div style={{ display:"flex", alignItems:"center", justifyContent:"center", width:"100%", height:"100%", background:"#f5f4f4" }}>
-                <FileIcon ext={currentFile.ext} w={120} h={144}/>
-              </div>
-            )}
-          </div>
-          <div onClick={() => navigate(1)} style={{ position:"absolute", right:0, top:0, bottom:0, width:16, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", zIndex:2 }}>
-            <svg width="8" height="16" viewBox="0 0 8 16"><polyline points="1,1 7,8 1,15" fill="none" stroke="#c97a7a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </div>
+        <div onWheel={onWheel} style={{ flex:1, minHeight:0, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", cursor:zoom>1?"grab":"pointer", padding:14 }}>
+          {imgSrc ? (
+            <img
+              key={currentFile.name}
+              src={imgSrc}
+              alt={currentFile.name}
+              draggable="false"
+              onLoad={e => { const {naturalWidth:nw,naturalHeight:nh}=e.target; if(nw&&nh){imgRatio.current=nw/nh; if(!sizeRef.current._userResized){const h=sizeRef.current.h-75;const w=Math.round(h*imgRatio.current)+28;setSize(s=>({...s,w:Math.max(220,w),_userResized:false}));}} setReady(true); }}
+              onMouseDown={onImgMouseDown}
+              style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", display:"block", transform:`scale(${zoom}) translate(${pan.x/zoom}px,${pan.y/zoom}px)`, transformOrigin:"center", transition:"transform 0.05s", userSelect:"none" }}
+            />
+          ) : (
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"center", width:"100%", height:"100%", background:"#f5f4f4" }}>
+              <FileIcon ext={currentFile.ext} w={120} h={144}/>
+            </div>
+          )}
+        </div>
+        {/* Resize handle bottom-right */}
+        <div onMouseDown={onResizeMouseDown} style={{ position:"absolute", right:0, bottom:0, width:14, height:14, cursor:"nwse-resize", zIndex:10, display:"flex", alignItems:"flex-end", justifyContent:"flex-end", padding:3 }}>
+          <svg width="8" height="8" viewBox="0 0 8 8"><line x1="2" y1="8" x2="8" y2="2" stroke="#c97a7a" strokeWidth="1.25"/><line x1="5" y1="8" x2="8" y2="5" stroke="#c97a7a" strokeWidth="1.25"/></svg>
         </div>
       </div>
     </div>
@@ -422,7 +470,7 @@ function App() {
     const slots = [{ x:GRID_X, y:PAD }, { x:rightX, y:PAD+35 }, { x:GRID_X+60, y:bottomY }, { x:rightX-60, y:bottomY-40 }];
     let offsetX, offsetY;
     if (idx < 4) { offsetX = slots[idx].x; offsetY = slots[idx].y; }
-    else { offsetX = GRID_X + (idx*40)%(rightX-GRID_X); offsetY = PAD + (idx*30)%(bottomY-PAD); }
+    else { offsetX = GRID_X + Math.floor(Math.random() * Math.max(1, rightX - GRID_X)); offsetY = PAD + Math.floor(Math.random() * Math.max(1, bottomY - PAD)); }
     offsetX = Math.max(GRID_X, Math.min(offsetX, vw-defaultW-PAD));
     offsetY = Math.max(PAD, Math.min(offsetY, vh-FIXED_H-PAD));
     setWindows(ws => [...ws, { id, type:"viewer", folderId, projId, projName, fileIdx, zIndex: z, offsetX, offsetY }]);
@@ -537,16 +585,16 @@ function App() {
             if (win.type==="dossier") {
               if (win.folderId==="dump") return <DumpWindow key={win.id} win={win} closeWindow={closeWindow} bringToFront={bringToFront} openViewer={openViewer}/>;
               return (
-                <Window key={win.id} title={folder.label} style={{ left:"20px", top:"16px", width:"640px", height:"438px", zIndex:win.zIndex }} onClose={()=>closeWindow(win.id)} onMouseDownCapture={()=>bringToFront(win.id)} breadcrumb={<Breadcrumb parts={[{label:"Bureau",onClick:()=>setWindows([])},{label:folder.label}]}/>}>
-                    <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 183px)", columnGap:18, rowGap:10, marginTop:-1, justifyContent:"center", paddingBottom:0, paddingLeft:33, paddingRight:27, boxSizing:"border-box", width:"100%" }}>
+                <Window key={win.id} title={folder.label} style={{ left:"18px", top:"14px", width:"576px", height:"406px", zIndex:win.zIndex }} onClose={()=>closeWindow(win.id)} onMouseDownCapture={()=>bringToFront(win.id)} breadcrumb={<Breadcrumb parts={[{label:"Bureau",onClick:()=>setWindows([])},{label:folder.label}]}/>}>
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 165px)", columnGap:16, rowGap:9, marginTop:-1, justifyContent:"center", paddingBottom:0, paddingLeft:30, paddingRight:24, boxSizing:"border-box", width:"100%" }}>
                       {(folder.sub||[]).map(sub => (
                         <div key={sub.id} onClick={()=>openProjet(win.folderId,sub.id,sub.name)} style={{ display:"flex", flexDirection:"column", alignItems:"center", cursor:"pointer" }}
                           onMouseEnter={e=>e.currentTarget.querySelector("svg").style.transform="translateY(-3px)"}
                           onMouseLeave={e=>e.currentTarget.querySelector("svg").style.transform="none"}>
-                          <div style={{ width:183, height:148, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                            <FolderSVG w={183} h={148}/>
+                          <div style={{ width:165, height:133, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                            <FolderSVG w={165} h={133}/>
                           </div>
-                          <div style={{ ...S.deskLabel, fontSize:12, marginTop:4, lineHeight:1.3, height:"31px", overflow:"hidden", width:"183px", textAlign:"center", whiteSpace:"normal", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>{sub.name}</div>
+                          <div style={{ ...S.deskLabel, fontSize:11, marginTop:4, lineHeight:1.3, height:"28px", overflow:"hidden", width:"165px", textAlign:"center", whiteSpace:"normal", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>{sub.name}</div>
                         </div>
                       ))}
                     </div>
@@ -556,8 +604,8 @@ function App() {
 
             if (win.type==="projet") {
               return (
-                <Window key={win.id} title={win.projName} style={{ left:"45px", top:"50px", width:"631px", height:"353px", zIndex:win.zIndex }} onClose={()=>closeWindow(win.id)} onMouseDownCapture={()=>bringToFront(win.id)} breadcrumb={<Breadcrumb parts={[{label:"Bureau",onClick:()=>setWindows([])},{label:folder.label,onClick:()=>openDossier(win.folderId)},{label:win.projName}]}/>}>
-                    <div style={{ display:"grid", gridTemplateColumns:"repeat(4, 120px)", columnGap:28, rowGap:10, marginTop:4, paddingLeft:29, paddingRight:32, boxSizing:"border-box", width:"100%" }}>
+                <Window key={win.id} title={win.projName} style={{ left:"38px", top:"50px", width:"631px", height:"388px", zIndex:win.zIndex }} onClose={()=>closeWindow(win.id)} onMouseDownCapture={()=>bringToFront(win.id)} breadcrumb={<Breadcrumb parts={[{label:"Bureau",onClick:()=>setWindows([])},{label:folder.label,onClick:()=>openDossier(win.folderId)},{label:win.projName}]}/>}>
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(4, 120px)", columnGap:28, rowGap:10, marginTop:4, paddingLeft:25, paddingRight:32, boxSizing:"border-box", width:"100%" }}>
                       {proj.files.filter(f=>f.ext.toUpperCase()!=="TXT").map((f,i) => {
                         const isImg = ["JPG","PNG","JPEG"].includes(f.ext.toUpperCase());
                         const thumbSrc = isImg ? getImageSrc(f.name) : null;
