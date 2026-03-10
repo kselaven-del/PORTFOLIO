@@ -61,24 +61,25 @@ const FileTxtSVG = ({ w = 80, h = 96 }) => (
 );
 
 const FILE_ICONS = { JPG: FileImgSVG, PNG: FileImgSVG, JPEG: FileImgSVG, PDF: FilePdfSVG, TXT: FileTxtSVG, DWG: FileTxtSVG };
-const GITHUB_GD  = "https://raw.githubusercontent.com/kselaven-del/portfolio-graphic-design/main/";
-const GITHUB_OBJ = "https://raw.githubusercontent.com/kselaven-del/portfolio-objects-fashion/main/";
+const GITHUB_GD  = "/images/graphic-design/";
+const GITHUB_OBJ = "/images/objects/";
 const GD_FILES  = new Set(["AVA.Picture-1.jpg","AVA.Picture-2.jpg","AVA.Picture-3.jpg","AVA.Picture-4.jpg","AVA.Picture-5.jpg","AVA.Picture-6.jpg","AVA.Picture-7.jpg","AVA.Picture-8.jpg","AVA.Picture-9.jpg","AVA.Picture-10.jpg","AVA.Picture-11.jpg","AVA.Picture-12.jpg","AVA.Picture-13.jpg","AVA.Picture-14.jpg","BIO.Collage-1.cc.jpg","BIO.Collage-2.cc.jpeg","BIO.Collage-3.cc.jpg","BIO.Collage-4.cc.jpeg","BIO.Collage-5.cc.jpg","BIO.Collage-6.cc.jpg","BIO.Collage-7.cc.jpg","BIO.Collage-8.cc.jpg","BIO.Collage-9.cc.jpg","MUR.Photo-1.jpeg","MUR.Iteration-9.png","ENT.Scan-1.jpg","ENT.Scan-2.jpg","ENT.Scan-3.jpg","ENT.Scan-4.jpg","ENT.Scan-5.jpg","ENT.Scan-6.jpg","ENT.Scan-7.jpg","ENT.Scan-8.jpg","ENT.Scan-9.jpg","ENT.Scan-10.jpg","ENT.Scan-11.jpg","ENT.Scan-12.jpg","ENT.Scan-13.jpg"]);
 const OBJ_FILES = new Set(["BBK.Studio-1.jpeg","BBK.Studio-2.jpeg","BBK.Studio-3.jpeg","BBK.Studio-4.jpeg","BBK.Studio-5.jpeg","BBK.Studio-6.jpeg","BBK.Studio-7.jpeg","BBK.Studio-8.jpeg","BBK.Studio-9.jpeg","BBK.Studio-10.jpeg","BBK.Studio-11.jpeg","BBK.Taney-1.jpeg","BBK.Taney-2.jpeg","BBK.Taney-3.jpeg","BBK.Taney-4.jpeg","BBK.Taney-5.jpeg","BBK.Taney-6.jpeg","BBK.Taney-7.jpeg","BBK.Taney-8.jpeg","BBK.Taney-9.jpeg","BBK.Taney-10.jpeg","BBK.Taney-11.jpeg","BBK.Taney-12.jpeg","BBK.Taney-13.jpeg","BBK.Taney-14.jpeg","BBK.Taney-15.jpeg","BBK.Taney-16.jpeg","BBK.Taney-17.jpeg","BIJ.1.png","BIJ.2.png","BIJ.3.png","BIJ.4.png","BIJ.5.png","BIS.1.jpg","BIS.2.jpg","BIS.3.jpg","BIS.4.jpg","BIS.5.jpg","BIS.6.jpg","CPT.1.jpg","CPT.2.jpg.jpg","PHI.0.jpg","PHI.Assia.jpg","PHI.Eliott.jpg","PHI.Emeraude.jpg","PHI.Jeanne.jpg","PHI.Maria.jpg","PHI.Nino.jpg","PHI.Noah.jpg","PHI.Scan-1.png","PHI.Scan-2.png","PHI.Scan-3.png"]);
-const GITHUB_BASE = "https://raw.githubusercontent.com/kselaven-del/portfolio-architecture/main/";
-const GITHUB_DUMP = "https://raw.githubusercontent.com/kselaven-del/portfolio-dump/main/";
+const GITHUB_BASE = "/images/architecture/";
+const GITHUB_DUMP = "/images/dump/";
 const DUMP_FILES = new Set(["Capture d'écran 2019-09-20 à 23.17.37.png","Capture d'écran 2019-12-05 à 11.29.13.png","Capture d'écran 2020-01-24 à 19.16.15.png","Capture d'écran 2020-01-31 à 21.18.39.png","Capture d'écran 2022-03-30 à 00.10.36.png","MOQ-UP T-SHIRT WORKSHOP.png"]);
-const IMAGE_EXTS = ["JPG", "PNG", "JPEG"];
-const encodeFilename = (name) => name.split("/").map(s => encodeURIComponent(s.normalize("NFC"))).join("/");
+const IMAGE_EXTS = ["JPG", "PNG", "JPEG", "WEBP"];
+const toWebp = (name) => name.replace(/\.(jpg|jpeg|png|JPG|JPEG|PNG)$/, ".webp");
 const getImageSrc = (name) => {
   if (!name) return null;
   const ext = name.split(".").pop().toUpperCase();
   if (IMAGE_EXTS.includes(ext)) {
+    const webpName = toWebp(name);
     let base = GITHUB_BASE;
     if (DUMP_FILES.has(name)) base = GITHUB_DUMP;
     else if (GD_FILES.has(name))  base = GITHUB_GD;
     else if (OBJ_FILES.has(name)) base = GITHUB_OBJ;
-    return base + encodeFilename(name);
+    return base + webpName;
   }
   return null;
 };
@@ -820,7 +821,7 @@ function App() {
             <React.Fragment>
               {cvOpen.has('portrait') && (
                 <CvWin id="portrait" title="Me" x={pX} y={pY} w={pW}>
-                  <img src="https://raw.githubusercontent.com/kselaven-del/portfolio-CV/main/Silan%20KIBORA_bw.JPG" alt="Silan Kibora" style={{ width:"100%", display:"block", objectFit:"cover", marginBottom:12 }}/>
+                  <img src="/images/cv/Silan KIBORA_bw.webp" alt="Silan Kibora" style={{ width:"100%", display:"block", objectFit:"cover", marginBottom:12 }}/>
                   <div style={{ fontSize:11, fontWeight:700, letterSpacing:2, color:"#a21c26", textAlign:"center" }}>Silan KIBORA</div>
                   <div style={{ fontSize:9, color:"#c97a7a", letterSpacing:1.5, textAlign:"center", marginTop:3 }}>Architecture · Design</div>
                 </CvWin>
