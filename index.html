@@ -234,8 +234,8 @@ function Window({ title, style, onClose, onExpand, breadcrumb, children, onMouse
   );
 }
 
-const DotBg = () => (
-  <div style={{ position:"absolute", inset:0, pointerEvents:"none", background:"#fff",
+const DotBg = (props) => (
+  <div {...props} style={{ position:"absolute", inset:0, pointerEvents:"auto", background:"#fff",
     backgroundImage:"linear-gradient(to right, #000 0.3px, transparent 0.3px), linear-gradient(to bottom, #000 0.3px, transparent 0.3px)",
     backgroundSize:"20px 20px", opacity:0.12 }}/>
 );
@@ -302,13 +302,13 @@ function ViewerWindow({ win, closeWindow, bringToFront, openDossier, openProjet,
   const proj = getProj(win.projId);
   const currentFile = proj.files[win.fileIdx];
   const imgSrc = getImageSrc(currentFile?.name);
-  const FIXED_H = Math.round(window.innerHeight * 0.46);
-  const defaultW = Math.round(FIXED_H * 1.2);
   const vw = window.innerWidth;
   const vh = window.innerHeight - 76;
+  const defaultW = win.initW || Math.round(vh * 0.72 * 1.2);
+  const FIXED_H = win.initH || Math.round(vh * 0.72);
   const folder = FOLDERS[win.folderId] || {};
 
-  const [pos, setPos] = useState({ left: Math.min(Math.max(4, win.offsetX || 0), vw - defaultW - 4), top: Math.min(Math.max(0, win.offsetY || 0), vh - FIXED_H - 4) });
+  const [pos, setPos] = useState({ left: Math.min(Math.max(4, win.offsetX || 0), vw - defaultW - 2), top: Math.min(Math.max(0, win.offsetY || 0), vh - FIXED_H - 2) });
   const [size, setSize] = useState({ w: defaultW, h: FIXED_H });
   const [ready, setReady] = useState(!imgSrc);
   const [zoom, setZoom] = useState(1);
@@ -328,7 +328,13 @@ function ViewerWindow({ win, closeWindow, bringToFront, openDossier, openProjet,
     bringToFront(win.id);
     const startX = e.clientX - pos.left, startY = e.clientY - pos.top;
     const onMove = ev => setPos({ left: Math.min(Math.max(0, ev.clientX - startX), vw - sizeRef.current.w - 4), top: Math.min(Math.max(0, ev.clientY - startY), vh - sizeRef.current.h - 4) });
-    const onUp = () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+    const onUp = e => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      // block the click that fires after mouseup from bubbling to desktop
+      const blockClick = ev => { ev.stopPropagation(); window.removeEventListener("click", blockClick, true); };
+      window.addEventListener("click", blockClick, true);
+    };
     window.addEventListener("mousemove", onMove); window.addEventListener("mouseup", onUp);
   };
 
@@ -380,21 +386,15 @@ function ViewerWindow({ win, closeWindow, bringToFront, openDossier, openProjet,
   };
 
   return (
-    <div onMouseDown={() => bringToFront(win.id)} style={{ position:"absolute", left:pos.left, top:pos.top, width:size.w, height:size.h, zIndex:win.zIndex, pointerEvents:"auto", display:"flex", flexDirection:"column", opacity:ready?1:0, transition:ready?"opacity 0.12s ease":"none" }}>
+    <div onMouseDown={() => bringToFront(win.id)} style={{ position:"absolute", left: Math.min(pos.left, vw - Math.min(size.w, vw-8) - 4), top: Math.min(pos.top, vh - Math.min(size.h, vh-8) - 4), width: Math.min(size.w, vw - 8), height: Math.min(size.h, vh - 8), zIndex:win.zIndex, pointerEvents:"auto", display:"flex", flexDirection:"column", opacity:ready?1:0, transition:ready?"opacity 0.12s ease":"none", overflow:"hidden" }}>
       <div onMouseDown={onBarMouseDown} style={{ height:27, flexShrink:0, background:"#fff", border:"1.25px solid #a21c26", borderBottom:"1.25px solid #a21c26", borderRadius:"4px 4px 0 0", display:"flex", alignItems:"center", padding:"0 8px", gap:7, cursor:"grab", position:"relative" }}>
         <BtnClose onClick={() => closeWindow(win.id)} data-btn/>
         <BtnExpand onClick={() => setFs({ projId:win.projId, projName:win.projName, fileIdx:win.fileIdx, folderId:win.folderId })} data-btn/>
         <span style={{ position:"absolute", right:10, left:60, fontFamily:"'IBM Plex Mono',monospace", fontSize:14, fontWeight:400, fontStyle:"italic", letterSpacing:0.3, color:"#a21c26", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", top:"50%", transform:"translateY(-50%)", textAlign:"right" }}>{currentFile.name}</span>
       </div>
       <div style={{ flex:1, minHeight:0, background:"#fff", border:"1.25px solid #a21c26", borderTop:"none", borderRadius:"0 0 4px 4px", display:"flex", flexDirection:"column", overflow:"hidden", position:"relative" }}>
-        <div style={{ height:20, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"flex-end", padding:"4px 12px 0", fontSize:9, fontWeight:700, letterSpacing:1, whiteSpace:"nowrap", overflow:"hidden" }}>
-          <span style={{ color:"#c97a7a", overflow:"hidden", textOverflow:"ellipsis", cursor:"pointer", flexShrink:2, minWidth:0 }} onClick={() => openDossier(win.folderId)}>{folder.label}</span>
-          <span style={{ margin:"0 4px", color:"#f0d0d0", flexShrink:0 }}>›</span>
-          <span style={{ color:"#c97a7a", overflow:"hidden", textOverflow:"ellipsis", cursor:"pointer", flexShrink:1, minWidth:0 }} onClick={() => openProjet(win.folderId, win.projId, win.projName)}>{win.projName}</span>
-          <span style={{ margin:"0 4px", color:"#f0d0d0", flexShrink:0 }}>›</span>
-          <span style={{ color:"#a21c26", flexShrink:0 }}>{currentFile.name}</span>
-        </div>
-        <div onWheel={onWheel} style={{ flex:1, minHeight:0, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", cursor:zoom>1?"grab":"pointer", padding:14 }}>
+
+        <div style={{ flex:1, minHeight:0, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", cursor:"pointer", padding:14 }}>
           {imgSrc ? (
             <img
               key={currentFile.name}
@@ -403,7 +403,7 @@ function ViewerWindow({ win, closeWindow, bringToFront, openDossier, openProjet,
               draggable="false"
               onLoad={e => { const {naturalWidth:nw,naturalHeight:nh}=e.target; if(nw&&nh){imgRatio.current=nw/nh; if(!sizeRef.current._userResized){const h=sizeRef.current.h-75;const w=Math.round(h*imgRatio.current)+28;setSize(s=>({...s,w:Math.max(220,w),_userResized:false}));}} setReady(true); }}
               onMouseDown={onImgMouseDown}
-              style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", display:"block", transform:`scale(${zoom}) translate(${pan.x/zoom}px,${pan.y/zoom}px)`, transformOrigin:"center", transition:"transform 0.05s", userSelect:"none" }}
+              style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", display:"block", userSelect:"none" }}
             />
           ) : (
             <div style={{ display:"flex", alignItems:"center", justifyContent:"center", width:"100%", height:"100%", background:"#f5f4f4" }}>
@@ -421,6 +421,94 @@ function ViewerWindow({ win, closeWindow, bringToFront, openDossier, openProjet,
 }
 
 let nextId = 1, nextZ = 10, gridCounter = 0;
+
+function FsViewer({ fs, setFs }) {
+  const proj = getProj(fs.projId);
+  const cf = proj.files[fs.fileIdx];
+  const imgSrc = getImageSrc(cf?.name);
+  const ZOOM_IN = 2.5;
+  const [zoomed, setZoomed] = React.useState(false);
+  const [origin, setOrigin] = React.useState("50% 50%");
+  const [mousePos, setMousePos] = React.useState({ x: -999, y: -999 });
+  const [overImg, setOverImg] = React.useState(false);
+  React.useEffect(() => { setZoomed(false); setOrigin("50% 50%"); }, [fs.fileIdx]);
+
+  const handleImgMouseMove = e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const px = ((e.clientX - r.left) / r.width * 100).toFixed(2);
+    const py = ((e.clientY - r.top) / r.height * 100).toFixed(2);
+    setOrigin(px + "% " + py + "%");
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
+  const handleImgClick = e => {
+    e.stopPropagation();
+    const r = e.currentTarget.getBoundingClientRect();
+    const px = ((e.clientX - r.left) / r.width * 100).toFixed(2);
+    const py = ((e.clientY - r.top) / r.height * 100).toFixed(2);
+    setOrigin(px + "% " + py + "%");
+    setZoomed(z => !z);
+  };
+
+  return (
+    <div style={{ position:"fixed", top:61, left:0, right:0, bottom:0, background:"#fff", zIndex:999999, display:"flex", flexDirection:"column", overflow:"hidden", borderTop:"1.25px solid #a21c26" }}>
+      {overImg && (
+        <div style={{ position:"fixed", left: mousePos.x - 8, top: mousePos.y - 8, pointerEvents:"none", zIndex:9999999 }}>
+          <svg width="16" height="16" viewBox="0 0 28 28" fill="none">
+            <circle cx="11" cy="11" r="8" stroke="#000" strokeWidth="2" fill="rgba(255,255,255,0.85)"/>
+            <line x1="17" y1="17" x2="25" y2="25" stroke="#000" strokeWidth="2" strokeLinecap="round"/>
+            {!zoomed && <><line x1="11" y1="7.5" x2="11" y2="14.5" stroke="#000" strokeWidth="2" strokeLinecap="round"/><line x1="7.5" y1="11" x2="14.5" y2="11" stroke="#000" strokeWidth="2" strokeLinecap="round"/></>}
+            {zoomed && <line x1="7.5" y1="11" x2="14.5" y2="11" stroke="#000" strokeWidth="2" strokeLinecap="round"/>}
+          </svg>
+        </div>
+      )}
+      <div style={{ height:38, background:"#fff", borderBottom:"1.25px solid #a21c26", display:"flex", alignItems:"center", padding:"0 8px", gap:7, flexShrink:0 }}>
+        <BtnClose onClick={()=>setFs(null)}/>
+        <span style={{ fontSize:9, fontWeight:700, letterSpacing:1, color:"#c97a7a", marginLeft:12 }}>{cf.name}</span>
+      </div>
+      <div style={{ flex:1, overflow:"hidden", display:"flex", alignItems:"center", justifyContent:"center", background:"#fff", position:"relative", cursor:"default" }}>
+        <div onClick={()=>setFs(s=>{
+  const imgs=proj.files.map((_,i)=>i).filter(i=>getImageSrc(proj.files[i].name));
+  if(!imgs.length)return s;
+  const cur=imgs.indexOf(s.fileIdx); const next=imgs[(cur-1+imgs.length)%imgs.length];
+  return {...s,fileIdx:next};
+})} style={{ position:"absolute", left:0, top:0, bottom:0, zIndex:10, width:80, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer" }}>
+          <svg width="14" height="28" viewBox="0 0 14 28"><polyline points="12,2 2,14 12,26" fill="none" stroke="#a21c26" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", width:"100%", height:"100%", padding:"16px 80px", boxSizing:"border-box", overflow:"hidden" }}>
+          {imgSrc
+            ? <img src={imgSrc} alt={cf.name} draggable="false"
+                onClick={handleImgClick}
+                onMouseMove={handleImgMouseMove}
+                onMouseEnter={()=>setOverImg(true)}
+                onMouseLeave={()=>setOverImg(false)}
+                style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", display:"block",
+                  transform: zoomed ? "scale(" + ZOOM_IN + ")" : "scale(1)",
+                  transformOrigin: origin,
+                  transition: "transform 0.25s ease",
+                  userSelect:"none", cursor:"none" }}/>
+            : <FileIcon ext={cf.ext} w={120} h={144}/>}
+        </div>
+        <div onClick={()=>setFs(s=>{
+  const imgs=proj.files.map((_,i)=>i).filter(i=>getImageSrc(proj.files[i].name));
+  if(!imgs.length)return s;
+  const cur=imgs.indexOf(s.fileIdx); const next=imgs[(cur+1)%imgs.length];
+  return {...s,fileIdx:next};
+})} style={{ position:"absolute", right:0, top:0, bottom:0, zIndex:10, width:80, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer" }}>
+          <svg width="14" height="28" viewBox="0 0 14 28"><polyline points="2,2 12,14 2,26" fill="none" stroke="#a21c26" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+      </div>
+      <div style={{ height:76, background:"#fff", borderTop:"1.25px solid #a21c26", display:"flex", gap:8, padding:"8px 14px", overflowX:"auto", flexShrink:0, alignItems:"center" }}>
+        {proj.files.map((f,i) => {
+          const tSrc = getImageSrc(f.name);
+          if (!tSrc) return null;
+          return <div key={i} onClick={()=>setFs(s=>({...s,fileIdx:i}))} style={{ width:58, height:58, flexShrink:0, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", opacity:i===fs.fileIdx?1:0.5 }}>
+            <img src={tSrc} alt={f.name} style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+          </div>;
+        })}
+      </div>
+    </div>
+  );
+}
 
 function App() {
   const [windows, setWindows] = useState([]);
@@ -456,13 +544,50 @@ function App() {
     nextZ++; nextId++;
     const wins = [{ id: nextId, type:"projet", folderId, projId, projName, zIndex: nextZ }];
     if (hasDesc) { nextZ++; nextId++; wins.push({ id: nextId, type:"texte", folderId, projId, projName, zIndex: nextZ }); }
-    setWindows(ws => [...ws, ...wins]);
+    // Close all viewer windows from previous projects
+    setWindows(ws => {
+      const filtered = ws.filter(w => w.type !== "viewer");
+      return [...filtered, ...wins];
+    });
+    // Open 2 random images at slot 0 (top-left) and slot 3 (bottom-right)
+    const proj = getProj(projId);
+    const imgFiles = proj.files.filter(f => ["JPG","JPEG","PNG"].includes(f.ext.toUpperCase()));
+    if (imgFiles.length > 0) {
+      const shuffled = [...imgFiles].sort(() => Math.random() - 0.5);
+      const toOpen = shuffled.slice(0, Math.min(2, shuffled.length));
+      setTimeout(() => {
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const HEADER = 76; // header height
+        const ZONE_LEFT = 38 + 631 + 16; // right edge of project window + gap
+        const ZONE_RIGHT = vw;
+        const ZONE_TOP = HEADER;
+        const ZONE_BOT = vh;
+        const J = () => Math.floor(Math.random() * 22); // ±0–22px jitter
+
+        const openAt = (fileIdx, x, y) => {
+          const h = Math.round(vh * (0.65 + Math.random() * 0.15));
+          const w = Math.round(h * 1.2);
+          const offsetX = Math.max(ZONE_LEFT, Math.min(x, vw - w - 2));
+          const offsetY = Math.max(HEADER + 2, Math.min(y, vh - h - 2));
+          const id = ++nextId, z = ++nextZ;
+          setWindows(ws => [...ws, { id, type:"viewer", folderId, projId, projName, fileIdx, zIndex: z, offsetX, offsetY, initW: w, initH: h }]);
+          return { w, h };
+        };
+
+        // Image 1 : coin haut-gauche proche du coin haut-gauche de la zone + petit jitter vers le bas/droite
+        const x1 = ZONE_LEFT + 6 + J();
+        const y1 = ZONE_TOP + 4 + J();
+        openAt(proj.files.indexOf(toOpen[0]), x1, y1);
+
+        gridCounter = 1;
+      }, 30);
+    }
   };
 
   const openViewer = (folderId, projId, projName, fileIdx) => {
     const id = ++nextId, z = ++nextZ;
     const vw = window.innerWidth, vh = window.innerHeight;
-    const FIXED_H = Math.round(vh * 0.50);
+    const FIXED_H = Math.round(vh * (0.65 + Math.random() * 0.15));
     const defaultW = Math.round(FIXED_H * 1.2);
     const PAD = 12, GRID_X = 52 + 640 + PAD;
     const idx = gridCounter++;
@@ -473,7 +598,7 @@ function App() {
     else { offsetX = GRID_X + Math.floor(Math.random() * Math.max(1, rightX - GRID_X)); offsetY = PAD + Math.floor(Math.random() * Math.max(1, bottomY - PAD)); }
     offsetX = Math.max(GRID_X, Math.min(offsetX, vw-defaultW-PAD));
     offsetY = Math.max(PAD, Math.min(offsetY, vh-FIXED_H-PAD));
-    setWindows(ws => [...ws, { id, type:"viewer", folderId, projId, projName, fileIdx, zIndex: z, offsetX, offsetY }]);
+    setWindows(ws => [...ws, { id, type:"viewer", folderId, projId, projName, fileIdx, zIndex: z, offsetX, offsetY, initW: defaultW, initH: FIXED_H }]);
   };
 
   useEffect(() => {
@@ -528,8 +653,8 @@ function App() {
             </div>
           </nav>
         </header>
-        <div style={{ flex:1, position:"relative", overflow:"hidden" }}>
-          <DotBg/>
+        <div style={{ flex:1, position:"relative", overflow:"hidden" }} onClick={e=>{ if(e.target===e.currentTarget||e.target.dataset?.dotbg) { setWindows([]); setFs(null); setCvOpen(new Set()); } }}>
+          <DotBg data-dotbg="1"/>
 
           {["architecture","objects","graphicdesign"].map((fid, i) => {
             const pos = [{ left:"40px", top:"20px" }, { left:"344px", top:"20px" }, { left:"648px", top:"20px" }];
@@ -568,15 +693,7 @@ function App() {
             <div style={{...S.deskLabel, fontSize:20}}>Portfolio.2025</div>
           </div>
 
-          {(windows.filter(w=>w.type!=="dossier").length>0||cvOpen.size>0)&&!fs&&(
-            <div onClick={e=>{e.stopPropagation();setWindows(ws=>ws.filter(w=>w.type==="dossier"));setFs(null);setCvOpen(new Set());}}
-              style={{ position:"fixed", bottom:30, left:"50%", transform:"translateX(-50%)", zIndex:99999, pointerEvents:"auto", cursor:"pointer" }}>
-              <div style={{ display:"flex", alignItems:"center", gap:14, border:"1.8px solid #a21c26", borderRadius:999, padding:"9px 20px 9px 14px", background:"#fff200" }}>
-                <svg viewBox="0 0 18 18" width="20" height="20"><line x1="2" y1="16" x2="16" y2="2" stroke="#a21c26" strokeWidth="1.5"/><line x1="2" y1="2" x2="16" y2="16" stroke="#a21c26" strokeWidth="1.5"/></svg>
-                <span style={{ fontFamily:"'IBM Plex Mono',monospace", fontStyle:"italic", fontSize:17, fontWeight:400, letterSpacing:1.5, color:"#a21c26" }}>Clear all</span>
-              </div>
-            </div>
-          )}
+
 
           {windows.map(win => {
             const folder = FOLDERS[win.folderId] || {};
@@ -628,7 +745,14 @@ function App() {
             if (win.type==="texte") return <TextWindow key={win.id} win={win} closeWindow={closeWindow} bringToFront={bringToFront}/>;
 
             if (win.type==="viewer") {
-              const navigate = dir => { const files=getProj(win.projId).files; const newIdx=(win.fileIdx+dir+files.length)%files.length; setWindows(ws=>ws.map(w=>w.id===win.id?{...w,fileIdx:newIdx}:w)); };
+              const navigate = dir => {
+  const files = getProj(win.projId).files;
+  const imgIndices = files.map((f,i)=>i).filter(i=>getImageSrc(files[i].name));
+  if (!imgIndices.length) return;
+  const cur = imgIndices.indexOf(win.fileIdx);
+  const next = imgIndices[(cur + dir + imgIndices.length) % imgIndices.length];
+  setWindows(ws=>ws.map(w=>w.id===win.id?{...w,fileIdx:next}:w));
+};
               return <ViewerWindow key={win.id} win={win} closeWindow={closeWindow} bringToFront={bringToFront} openDossier={openDossier} openProjet={openProjet} setFs={setFs} navigate={navigate}/>;
             }
             return null;
@@ -651,39 +775,7 @@ function App() {
           </Window>
         )}
 
-        {fs && (() => {
-          const proj = getProj(fs.projId);
-          const cf = proj.files[fs.fileIdx];
-          const imgSrc = getImageSrc(cf?.name);
-          return (
-            <div style={{ position:"fixed", top:61, left:0, right:0, bottom:0, background:"#fff", zIndex:999999, display:"flex", flexDirection:"column", overflow:"hidden", borderTop:"1.25px solid #a21c26" }}>
-              <div style={{ height:38, background:"#fff", borderBottom:"1.25px solid #a21c26", display:"flex", alignItems:"center", padding:"0 8px", gap:7, flexShrink:0 }}>
-                <BtnClose onClick={()=>setFs(null)}/>
-                <span style={{ fontSize:9, fontWeight:700, letterSpacing:1, color:"#c97a7a", marginLeft:12 }}>{cf.name}</span>
-              </div>
-              <div style={{ flex:1, overflow:"hidden", display:"flex", alignItems:"center", justifyContent:"center", background:"#fff", position:"relative" }}>
-                <div onClick={()=>setFs(s=>({...s,fileIdx:(s.fileIdx-1+proj.files.length)%proj.files.length}))} style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", zIndex:10, width:32, height:56, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer" }}>
-                  <svg width="14" height="28" viewBox="0 0 14 28"><polyline points="12,2 2,14 12,26" fill="none" stroke="#a21c26" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </div>
-                <div style={{ display:"flex", alignItems:"center", justifyContent:"center", width:"100%", height:"100%", padding:"16px 48px", boxSizing:"border-box" }}>
-                  {imgSrc ? <img src={imgSrc} alt={cf.name} draggable="false" style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", display:"block" }}/> : <FileIcon ext={cf.ext} w={120} h={144}/>}
-                </div>
-                <div onClick={()=>setFs(s=>({...s,fileIdx:(s.fileIdx+1)%proj.files.length}))} style={{ position:"absolute", right:12, top:"50%", transform:"translateY(-50%)", zIndex:10, width:32, height:56, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer" }}>
-                  <svg width="14" height="28" viewBox="0 0 14 28"><polyline points="2,2 12,14 2,26" fill="none" stroke="#a21c26" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </div>
-              </div>
-              <div style={{ height:76, background:"#fff", borderTop:"1.25px solid #a21c26", display:"flex", gap:8, padding:"8px 14px", overflowX:"auto", flexShrink:0, alignItems:"center" }}>
-                {proj.files.map((f,i) => {
-                  const tSrc = getImageSrc(f.name);
-                  if (!tSrc) return null;
-                  return <div key={i} onClick={()=>setFs(s=>({...s,fileIdx:i}))} style={{ width:58, height:58, flexShrink:0, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", opacity:i===fs.fileIdx?1:0.5 }}>
-                    <img src={tSrc} alt={f.name} style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
-                  </div>;
-                })}
-              </div>
-            </div>
-          );
-        })()}
+        {fs && <FsViewer fs={fs} setFs={setFs}/>}
 
         {cvOpen.size > 0 && (() => {
           const WIN_Z = cvZ;
