@@ -63,7 +63,7 @@ const FileTxtSVG = ({ w = 80, h = 96 }) => (
 const FILE_ICONS = { JPG: FileImgSVG, PNG: FileImgSVG, JPEG: FileImgSVG, PDF: FilePdfSVG, TXT: FileTxtSVG, DWG: FileTxtSVG };
 const GITHUB_GD  = "/images/graphic-design/";
 const GITHUB_OBJ = "/images/objects/";
-const GD_FILES  = new Set(["AVA.Picture-1.jpg","AVA.Picture-2.jpg","AVA.Picture-3.jpg","AVA.Picture-4.jpg","AVA.Picture-5.jpg","AVA.Picture-6.jpg","AVA.Picture-7.jpg","AVA.Picture-8.jpg","AVA.Picture-9.jpg","AVA.Picture-10.jpg","AVA.Picture-11.jpg","AVA.Picture-12.jpg","AVA.Picture-13.jpg","AVA.Picture-14.jpg","BIO.Collage-1.cc.jpg","BIO.Collage-2.cc.jpeg","BIO.Collage-3.cc.jpg","BIO.Collage-4.cc.jpeg","BIO.Collage-5.cc.jpg","BIO.Collage-6.cc.jpg","BIO.Collage-7.cc.jpg","BIO.Collage-8.cc.jpg","BIO.Collage-9.cc.jpg","MUR.Photo-1.jpeg","MUR.Iteration-9.png","ENT.Scan-1.jpg","ENT.Scan-2.jpg","ENT.Scan-3.jpg","ENT.Scan-4.jpg","ENT.Scan-5.jpg","ENT.Scan-6.jpg","ENT.Scan-7.jpg","ENT.Scan-8.jpg","ENT.Scan-9.jpg","ENT.Scan-10.jpg","ENT.Scan-11.jpg","ENT.Scan-12.jpg","ENT.Scan-13.jpg"]);
+const GD_FILES  = new Set(["AVA.Picture-1.jpg","AVA.Picture-2.jpg","AVA.Picture-3.jpg","AVA.Picture-4.jpg","AVA.Picture-5.jpg","AVA.Picture-7.jpg","AVA.Picture-8.jpg","AVA.Picture-9.jpg","AVA.Picture-10.jpg","AVA.Picture-11.jpg","AVA.Picture-12.jpg","AVA.Picture-13.jpg","AVA.Picture-14.jpg","BIO.Collage-1.cc.jpg","BIO.Collage-2.cc.jpeg","BIO.Collage-3.cc.jpg","BIO.Collage-4.cc.jpeg","BIO.Collage-5.cc.jpg","BIO.Collage-6.cc.jpg","BIO.Collage-7.cc.jpg","BIO.Collage-8.cc.jpg","BIO.Collage-9.cc.jpg","MUR.Photo-1.jpeg","MUR.Iteration-9.png","ENT.Scan-1.jpg","ENT.Scan-2.jpg","ENT.Scan-3.jpg","ENT.Scan-4.jpg","ENT.Scan-5.jpg","ENT.Scan-6.jpg","ENT.Scan-7.jpg","ENT.Scan-8.jpg","ENT.Scan-9.jpg","ENT.Scan-10.jpg","ENT.Scan-11.jpg","ENT.Scan-12.jpg","ENT.Scan-13.jpg"]);
 const OBJ_FILES = new Set(["BBK.Studio-1.jpeg","BBK.Studio-2.jpeg","BBK.Studio-3.jpeg","BBK.Studio-4.jpeg","BBK.Studio-5.jpeg","BBK.Studio-6.jpeg","BBK.Studio-7.jpeg","BBK.Studio-8.jpeg","BBK.Studio-9.jpeg","BBK.Studio-10.jpeg","BBK.Studio-11.jpeg","BBK.Taney-1.jpeg","BBK.Taney-2.jpeg","BBK.Taney-3.jpeg","BBK.Taney-4.jpeg","BBK.Taney-5.jpeg","BBK.Taney-6.jpeg","BBK.Taney-7.jpeg","BBK.Taney-8.jpeg","BBK.Taney-9.jpeg","BBK.Taney-10.jpeg","BBK.Taney-11.jpeg","BBK.Taney-12.jpeg","BBK.Taney-13.jpeg","BBK.Taney-14.jpeg","BBK.Taney-15.jpeg","BBK.Taney-16.jpeg","BBK.Taney-17.jpeg","BIJ.1.png","BIJ.2.png","BIJ.3.png","BIJ.4.png","BIJ.5.png","BIS.1.jpg","BIS.2.jpg","BIS.3.jpg","BIS.4.jpg","BIS.5.jpg","BIS.6.jpg","CPT.1.jpg","CPT.2.jpg.jpg","PHI.0.jpg","PHI.Assia.jpg","PHI.Eliott.jpg","PHI.Emeraude.jpg","PHI.Jeanne.jpg","PHI.Maria.jpg","PHI.Nino.jpg","PHI.Noah.jpg","PHI.Scan-1.png","PHI.Scan-2.png","PHI.Scan-3.png"]);
 const GITHUB_BASE = "/images/architecture/";
 const GITHUB_DUMP = "/images/dump/";
@@ -116,12 +116,12 @@ const PROJECTS = {
   ar02:{ label:"AR02", files:[{name:"TRB_1.jpg",ext:"JPG"},{name:"TRB_2.jpg",ext:"JPG"},{name:"TRB_3.jpg",ext:"JPG"},{name:"AR02.description.txt",ext:"TXT"}]},
   ar09:{ label:"AR09", files:[{name:"BUR.Interior.jpg",ext:"JPG"},{name:"BUR.Constructive section.jpg",ext:"JPG"},{name:"BUR.Elevation-2.png",ext:"PNG"},{name:"BUR.Elevations-1.png",ext:"PNG"},{name:"BUR.Plan-F1.jpg",ext:"JPG"},{name:"BUR.Plan-F2.jpg",ext:"JPG"},{name:"BUR.Plan-GF.jpg",ext:"JPG"},{name:"BUR.Section-1.jpg",ext:"JPG"},{name:"BUR.Section-2.jpg",ext:"JPG"},{name:"AR09.description.txt",ext:"TXT"}]},
   ar10:{ label:"AR10", files:[{name:"DMA.Savigny.Collage-1.png",ext:"PNG"},{name:"DMA.Savigny.Collage-2.png",ext:"PNG"},{name:"LAMOUR.png",ext:"PNG"},{name:"DMA.Corbeil.Model.png",ext:"PNG"},{name:"DMA.Corbeil.Elevation.png",ext:"PNG"},{name:"DMA.Corbeil.Plan-F1.png",ext:"PNG"},{name:"DMA.Corbeil.Plan-F2.png",ext:"PNG"},{name:"AR10.description.txt",ext:"TXT"}]},
-  ar11:{ label:"AR11", files:[{name:"ATA.Model.cc.jpg",ext:"JPG"},{name:"ATA.Handdrawing-19.png",ext:"PNG"},{name:"ATA.Handdrawing-20.png",ext:"PNG"},{name:"ATA.Handdrawing-1.png",ext:"PNG"},{name:"ATA.Handdrawing-2.png",ext:"PNG"},{name:"ATA.Handdrawing-3.png",ext:"PNG"},{name:"ATA.Handdrawing-4.png",ext:"PNG"},{name:"ATA.Handdrawing-5.png",ext:"PNG"},{name:"ATA.Handdrawing-6.png",ext:"PNG"},{name:"ATA.Handdrawing-7.png",ext:"PNG"},{name:"ATA.Handdrawing-8.png",ext:"PNG"},{name:"ATA.Handdrawing-9.png",ext:"PNG"},{name:"ATA.Handdrawing-10.png",ext:"PNG"},{name:"ATA.Handdrawing-11.png",ext:"PNG"},{name:"ATA.Handdrawing-12.png",ext:"PNG"},{name:"ATA.Handdrawing-13.png",ext:"PNG"},{name:"ATA.Handdrawing-14.png",ext:"PNG"},{name:"ATA.Handdrawing-15.png",ext:"PNG"},{name:"ATA.Handdrawing-16.png",ext:"PNG"},{name:"ATA.Handdrawing-17.png",ext:"PNG"},{name:"ATA.Handdrawing-18.png",ext:"PNG"},{name:"ATA.Site-Plan.jpg",ext:"JPG"},{name:"ATA.Site-Section.png",ext:"PNG"},{name:"AR11.description.txt",ext:"TXT"}]},
+  ar11:{ label:"AR11", files:[{name:"ATA.Model.cc.jpg",ext:"JPG"},{name:"ATA.Handdrawing-19.png",ext:"PNG"},{name:"ATA.Handdrawing-20.png",ext:"PNG"},{name:"ATA.Handdrawing-1.png",ext:"PNG"},{name:"ATA.Handdrawing-2.png",ext:"PNG"},{name:"ATA.Handdrawing-3.png",ext:"PNG"},{name:"ATA.Handdrawing-4.png",ext:"PNG"},{name:"ATA.Handdrawing-5.png",ext:"PNG"},{name:"ATA.Handdrawing-6.png",ext:"PNG"},{name:"ATA.Handdrawing-7.png",ext:"PNG"},{name:"ATA.Handdrawing-8.png",ext:"PNG"},{name:"ATA.Handdrawing-9.png",ext:"PNG"},{name:"ATA.Handdrawing-10.png",ext:"PNG"},{name:"ATA.Handdrawing-11.png",ext:"PNG"},{name:"ATA.Handdrawing-12.png",ext:"PNG"},{name:"ATA.Handdrawing-13.png",ext:"PNG"},{name:"ATA.Handdrawing-14.png",ext:"PNG"},{name:"ATA.Handdrawing-15.png",ext:"PNG"},{name:"ATA.Handdrawing-16.png",ext:"PNG"},{name:"ATA.Handdrawing-17.png",ext:"PNG"},{name:"ATA.Handdrawing-18.png",ext:"PNG"},{name:"ATA.Site-Plan.jpg",ext:"JPG"},{name:"AR11.description.txt",ext:"TXT"}]},
   ar12:{ label:"AR12", files:[{name:"CTV.C4D-Render-1.jpg",ext:"JPG"},{name:"CTV.C4D-Render-2.jpg",ext:"JPG"},{name:"CTV.Cut-up-1.jpg",ext:"JPG"},{name:"CTV.Cut-up-2.jpg",ext:"JPG"},{name:"CTV.Montage-1.jpg",ext:"JPG"},{name:"CTV.Montage-2.jpg",ext:"JPG"},{name:"CTV.Montage-3.jpg",ext:"JPG"},{name:"CTV.Montage-4.jpg",ext:"JPG"},{name:"AR12.description.txt",ext:"TXT"}]},
   ar13:{ label:"AR13", files:[{name:"MEP.Interior-model-1.jpg",ext:"JPG"},{name:"MEP.Interior-model-2.jpg",ext:"JPG"},{name:"MEP.Axon.Casa-Molino.jpg",ext:"JPG"},{name:"MEP.Axon.Film.jpg",ext:"JPG"},{name:"MEP.Detail.Casa-Molino.jpg",ext:"JPG"},{name:"MEP.Detail.Film.jpg",ext:"JPG"},{name:"AR13.description.txt",ext:"TXT"}]},
   ar14:{ label:"AR14", files:[{name:"FDB.Collage.Archives.jpg",ext:"JPG"},{name:"FDB.Collage.Atrium-1.cc.jpg",ext:"JPG"},{name:"FDB.Collage.Atrium-2.cc.jpeg",ext:"JPG"},{name:"FDB.Collage.Lab.jpg",ext:"JPG"},{name:"FDB.Collage.Parc.jpg",ext:"JPG"},{name:"FDB.Collage.Place.cc.jpeg",ext:"JPG"},{name:"FDB.Model.cc.jpg",ext:"JPG"},{name:"FDB.Plan-1.jpg",ext:"JPG"},{name:"FDB.Plan-2.jpg",ext:"JPG"},{name:"FDB.Section.jpg",ext:"JPG"},{name:"AR14.description.txt",ext:"TXT"}]},
   gd06:{ label:"GD06", files:[{name:"BIO.Collage-1.cc.jpg",ext:"JPG"},{name:"BIO.Collage-2.cc.jpeg",ext:"JPG"},{name:"BIO.Collage-3.cc.jpg",ext:"JPG"},{name:"BIO.Collage-4.cc.jpeg",ext:"JPG"},{name:"BIO.Collage-5.cc.jpg",ext:"JPG"},{name:"BIO.Collage-6.cc.jpg",ext:"JPG"},{name:"BIO.Collage-7.cc.jpg",ext:"JPG"},{name:"BIO.Collage-8.cc.jpg",ext:"JPG"},{name:"BIO.Collage-9.cc.jpg",ext:"JPG"}]},
-  gd07:{ label:"GD07", files:[{name:"AVA.Picture-1.jpg",ext:"JPG"},{name:"AVA.Picture-2.jpg",ext:"JPG"},{name:"AVA.Picture-3.jpg",ext:"JPG"},{name:"AVA.Picture-4.jpg",ext:"JPG"},{name:"AVA.Picture-5.jpg",ext:"JPG"},{name:"AVA.Picture-6.jpg",ext:"JPG"},{name:"AVA.Picture-7.jpg",ext:"JPG"},{name:"AVA.Picture-8.jpg",ext:"JPG"},{name:"AVA.Picture-9.jpg",ext:"JPG"},{name:"AVA.Picture-10.jpg",ext:"JPG"},{name:"AVA.Picture-11.jpg",ext:"JPG"},{name:"AVA.Picture-12.jpg",ext:"JPG"},{name:"AVA.Picture-13.jpg",ext:"JPG"},{name:"AVA.Picture-14.jpg",ext:"JPG"}]},
+  gd07:{ label:"GD07", files:[{name:"AVA.Picture-1.jpg",ext:"JPG"},{name:"AVA.Picture-2.jpg",ext:"JPG"},{name:"AVA.Picture-3.jpg",ext:"JPG"},{name:"AVA.Picture-4.jpg",ext:"JPG"},{name:"AVA.Picture-5.jpg",ext:"JPG"},{name:"AVA.Picture-7.jpg",ext:"JPG"},{name:"AVA.Picture-8.jpg",ext:"JPG"},{name:"AVA.Picture-9.jpg",ext:"JPG"},{name:"AVA.Picture-10.jpg",ext:"JPG"},{name:"AVA.Picture-11.jpg",ext:"JPG"},{name:"AVA.Picture-12.jpg",ext:"JPG"},{name:"AVA.Picture-13.jpg",ext:"JPG"},{name:"AVA.Picture-14.jpg",ext:"JPG"}]},
   gd08:{ label:"GD08", files:[{name:"MUR.Photo-1.jpeg",ext:"JPEG"},{name:"MUR.Iteration-9.png",ext:"PNG"}]},
   gd09:{ label:"GD09", files:[{name:"ENT.Scan-1.jpg",ext:"JPG"},{name:"ENT.Scan-2.jpg",ext:"JPG"},{name:"ENT.Scan-3.jpg",ext:"JPG"},{name:"ENT.Scan-4.jpg",ext:"JPG"},{name:"ENT.Scan-5.jpg",ext:"JPG"},{name:"ENT.Scan-6.jpg",ext:"JPG"},{name:"ENT.Scan-7.jpg",ext:"JPG"},{name:"ENT.Scan-8.jpg",ext:"JPG"},{name:"ENT.Scan-9.jpg",ext:"JPG"},{name:"ENT.Scan-10.jpg",ext:"JPG"},{name:"ENT.Scan-11.jpg",ext:"JPG"},{name:"ENT.Scan-12.jpg",ext:"JPG"},{name:"ENT.Scan-13.jpg",ext:"JPG"}]},
   obj02:{ label:"OBJ02", files:[{name:"BIJ.1.png",ext:"PNG"},{name:"BIJ.2.png",ext:"PNG"},{name:"BIJ.3.png",ext:"PNG"},{name:"BIJ.4.png",ext:"PNG"},{name:"BIJ.5.png",ext:"PNG"}]},
@@ -857,8 +857,530 @@ function App() {
   );
 }
 
+// ─── MOBILE APP ──────────────────────────────────────────────────────────────
+
+const MOBILE_SVG_06 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 628.15 565.24"><path fill="#851f20" d="M231.43,339.98h165.39c2.52,0,4.56-2.08,4.56-4.65v-110.66c0-2.57-2.04-4.65-4.56-4.65h-165.39c-2.52,0-4.56,2.08-4.56,4.65v110.66c0,2.57,2.04,4.65,4.56,4.65Z"/><path fill="#851f20" d="M213.59,356.23c0,5.58,4.52,11.16,10.04,11.16h180.89c5.21,0,10.03-5.57,10.03-11.16h-200.97Z"/><polygon fill="#d4b0b0" points="397.81 339.98 230.34 339.98 213.59 356.23 414.56 356.23 397.81 339.98"/><polygon fill="#c09090" points="392.28 341.28 235.97 341.28 230.39 348.11 397.86 348.11 392.28 341.28"/><polygon fill="#851f20" points="331.31 351.12 296.94 351.12 294.36 354.52 333.88 354.52 331.31 351.12"/><rect fill="#a21c26" x="237.09" y="230.12" width="154.06" height="99.75"/><circle fill="#fff" cx="314.12" cy="225.21" r="2.6"/><path fill="#851f20" d="M328.53,363.5h-28.92c-.99,0-3.63,0-3.63-3.38h36.18c0,3.38-2.69,3.38-3.63,3.38Z"/></svg>`;
+
+const MOBILE_SVG_07 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 628.15 565.24"><g><path fill="#a21c26" d="M401.36,382.54c-.28,21.99-1.37,27.82-.93,50.61-.03,3.73-.02,7.55.01,11.38.02,1.91.04,3.83.06,5.73,0,.34,0,.2,0,.25v.04s.03.09.03.09l.04.22c-.1.03-.22.05-.37.08-1.65.02-3.27.05-4.86.07-5.04.85-13.95.01-19.92.72l-2.31-.48c-2.06.24-4.47.41-6.54.15l.13-.14c-3.07.36-6.54.15-8.06.33l.13-.14-3.73.06.64-.2c-5.36.38-10.88.41-15.74.23l.4.58c-10.4-.65-14.21.55-23.59-.22l.13-.14c-11.87,1.53-18.76-1.04-30.99.41,1.53-.18-.65-.3-.53-.44-5.63.17-11.65.25-11.74,1.39-4.11-.02-3.34-.36-3.88-.8.02.5-3.54.71-6.75.74l1.47-.19-2.07.04-.88.02-.47.02-1.96.08-.02-.41c-.16.27-.32.57-.47.9.01.16.05.31.11.47-.2-.02-.38-.04-.51-.07.16-1.26.43-1.49.63-1.76.2-.27.33-.48.23-1.47l-.78.1c.01-.35.03-.7.04-1.04.02-.4.04-.79.06-1.17.05-.77.11-1.5.18-2.21.14-1.42.32-2.75.52-4.07.39-2.64.83-5.26,1.12-8.52.33-27.1-1.66-56.22-.28-81.44l.59-1.11c.86-.48-1.27-6.96-.48-7.92l-.39-2.93c.15-.82.32-2.56.51-1.1.03-2.71-.11-2.78-.37-4.73l.53-2.91c.41-10.7-.62-19.8-.41-31.06.27-3.3.41-7.31.46-11.7.03-2.2.03-4.49.02-6.83,0-.57,0-1.14-.01-1.72l-.02-.43c-.02-.3-.04-.61-.05-.92l.92-.08.25-.02h.13s.06-.02.06-.02h.24c.63-.02,1.26-.04,1.89-.06,2.51-.08,4.98-.15,7.38-.23,4.79-.18,9.25-.35,13.01-.49,20.62-1.28,44.6,2.13,65.72.67.69.12,2.47-.15,2.45-.25l15.22.11.71.73s66.17,66.32,20.74,11.08l.47.21c.83-5.39.83-5.39.83-5.39-4.17-4.54-8.63-8.57-13.51-12.63-.51-.43-1.02-.86-1.53-1.29-.1-.36-.42-.86-.93-1.49-.9-.11-2.27-.16-3.65-.16-.9,0-1.9.03-2.89.06-1.97.07-3.9.16-4.94,0l.23-.09c-6.45.89-13.29-.74-19.51.06.24-.09.38-.41,1.8-.43-4.53.15-10.73.4-11.06-.27-10.82.18-25.92-.13-32.86.94l.48-.19c-3.95.72-5.11.11-9.53.47-.24-.09-.55-.13-.5-.17-4.3.71-12.56.11-16.04.42l-.23-.45-8.57.1,3.2.1c-.48.53-1.75.46-3.53.27-.22-.02-.45-.05-.69-.07-.25-.03-.43-.05-.86-.08-.78-.05-1.59-.1-2.45-.15-1.73-.09-3.67-.15-5.62-.12.02,1.29.08,2.65.19,4.02-.08,5.09.56,7.18,1.14,10.34.58,2.98,1.11,5.98.81,9,.57,2.88-.93-2.54-.49,1.77-.64.14-.4-2.01-.91-.9.3,4.23-.65,6.94-.22,12.15l-.5.21c.91,6.8-.65,12.84.21,17.37.41,7.02-1.48,4.7-.5,12.01l-.67,2.84c-.11,3.13.82,2.24.5,5.71-.42-.21-.34,4.38-.74,2.35-.66,7.85.94,15.93-.18,26.26.82,2.24.33,7.45.95,9.12-.36.28-.06,10.42-.84,4.58-.06-.5-.05-1.39.09-1.33l-.49-.7c-.92,5.89.51,10.71.37,16.54.16-1.73.12-4.03.46-2.49l-.07,5.42-.41-1.13-.24,8.07.51-1.11c-.26,3.95-1.13,5.34-.4,9.79.4,2.02.69-3.74.85.43-.35,5.28-.87,13.19-1.02,19.93.57-.63.55,1.18.67,3.05l-.5.22c.69,7.61-1.1.75-.55,14l-.35-.94c.26.73.52,1.4.78,2l1.1-.26c3.07-.25,4.8-.31,6.08-.28,1.25.03,2.07.15,2.87.25.95.21,1.99.38,5.55-.29-2.81.08-1.33-1.1,2.14-.88l-.88.48c1.92-.1,2.56-.3,3.83-.2-1.14.26-.6.7,2.21.62l-1.89.6,5.33-.88c4.11.52,10.64-.13,12.33.55,0,0,8.85.33,10.88-.41-1.78.46,3.1.64,1.71,1.18,2.29-.52,9.06-.95,11.77-.39l-.51.06c10.03.57,17.14-.78,26.14-.09-.41-.58,4.34-.26,3.17-1,9.31-.73,16.97,1.5,20.33-.78,4.23-.12,5.02.54,7.21.65l-1.01.12c7.93-.19,10.24-.21,16.13-.16,2.94-.22,3.4-1.28,8.67-1.03-1.7.42.45.34,2.42.34-1.26.07-1.65.22.94.5.36-.13.93-.21,1.45-.28.02.03.12.06.07.1,1.15-.05,1.95-.08,2.49-.11.59-.03.87-.07.91-.1.1-.06-.72-.11-1.87-.14.11-.06-.1-.15-.8-.26,2.18.24,5.26.26,7.97.27.01-3.55,0-6.6.42-6.93-.01-.78-.03-1.54-.04-2.3-.02-.6-.03-1.18-.05-1.76-.04-1.16-.09-2.28-.13-3.37-.12-2.18-.23-4.25-.34-6.27-.24-4.03-.5-7.86-.64-11.98.37-.93.7,1,.85,3.39l-.14-5.84c.54.05.31,3.36.42,5.16.87-6.96-.86-14.34-.07-22.49l-.42-1.69.07-.49c-.22.02-.53-1.8-.6-3.01.47-1.15,1.08.08,1.05-3.96.45-3.19-.23-9.07-.48-13.25-.08,2.25-.34,1.53-.5.56-.02-2.02.45-3.18.25-4.74l.63-.19c-.59.79-.64-5.27-.9-6.02.47-1.15.4,3.13.75,3.64-.06-8.1-.03-4.05-.09-12.14-.47-4.32-.6.78-1.15-1.28-.12-3.81-.56-7.53-.18-11.91l-.56,1.39c-.43-7.17-.37-11.45.2-16.28-4.56-53.38-6.22-11.25-6.22-11.25-1.24,21.01.39,31.86.83,56.87Z"/></g></svg>`;
+
+// Mobile grid background
+function MobileDotBg() {
+  return (
+    <div style={{
+      position:"fixed", inset:0, zIndex:0, pointerEvents:"none",
+      backgroundImage:"radial-gradient(circle, #ccc 1px, transparent 1px)",
+      backgroundSize:"27px 27px"
+    }}/>
+  );
+}
+
+// Mobile Logo SVG (same as desktop)
+function MobileLogoSVG({ size = 44 }) {
+  return (
+    <svg height={size} viewBox="0 0 813.9 199.27" fill="none" style={{ display:"block" }}>
+      <path fill="#851f20" stroke="#851f20" strokeMiterlimit="10" strokeWidth="2" d="M62.92,157.66c-2.5,0-4.87-.48-7.12-1.44-2.25-.96-4.2-2.25-5.83-3.89-1.63-1.63-2.93-3.57-3.89-5.83-.96-2.25-1.44-4.63-1.44-7.12v-71.37c0-2.49.48-4.84,1.44-7.05.96-2.21,2.25-4.15,3.89-5.83,1.63-1.68,3.57-3,5.83-3.96,2.25-.96,4.63-1.44,7.12-1.44s4.99.48,7.19,1.44c2.21.96,4.15,2.28,5.83,3.96,1.68,1.68,3,3.62,3.96,5.83.96,2.21,1.44,4.56,1.44,7.05v56.55h20.14c2.3,0,4.44.43,6.4,1.29,1.97.86,3.72,2.04,5.25,3.53,1.53,1.49,2.73,3.24,3.6,5.25.86,2.01,1.29,4.17,1.29,6.47s-.43,4.44-1.29,6.4c-.86,1.97-2.06,3.72-3.6,5.25s-3.29,2.73-5.25,3.6c-1.97.86-4.1,1.29-6.4,1.29h-38.56Z"/>
+      <path fill="#851f20" stroke="#851f20" strokeMiterlimit="10" strokeWidth="2" d="M191.13,142.69h-33.24l-1.44,3.31c-1.63,3.55-4.03,6.38-7.2,8.49-3.17,2.11-6.57,3.17-10.22,3.17-2.11,0-4.22-.38-6.33-1.15-2.11-.77-3.98-1.94-5.61-3.53-1.63-1.58-2.97-3.5-4.03-5.75-1.06-2.25-1.58-4.92-1.58-7.99,0-1.44.14-2.9.43-4.39.29-1.49.77-2.9,1.44-4.25l32.67-69.07c1.92-4.03,4.34-7.31,7.27-9.86,2.92-2.54,6.64-3.81,11.15-3.81s8.37,1.27,11.3,3.81c2.92,2.54,5.35,5.83,7.27,9.86l32.52,69.07c1.34,2.88,2.01,5.76,2.01,8.63,0,1.73-.29,3.65-.86,5.76-.58,2.11-1.56,4.1-2.95,5.97-1.39,1.87-3.21,3.45-5.47,4.75-2.26,1.29-5.06,1.94-8.42,1.94-3.65,0-7.05-1.05-10.22-3.17-3.17-2.11-5.52-4.94-7.05-8.49l-1.44-3.31ZM169.26,116.51h10.36l-5.18-11.94-5.18,11.94Z"/>
+      <path fill="#851f20" stroke="#851f20" strokeMiterlimit="10" strokeWidth="2" d="M380.78,157.66c-2.5,0-4.87-.48-7.12-1.44-2.25-.96-4.2-2.25-5.83-3.89-1.63-1.63-2.93-3.57-3.88-5.83-.96-2.25-1.44-4.63-1.44-7.12v-71.37c0-2.49.48-4.84,1.44-7.05.96-2.21,2.25-4.15,3.88-5.83,1.63-1.68,3.57-3,5.83-3.96,2.25-.96,4.63-1.44,7.12-1.44s4.99.48,7.2,1.44c2.21.96,4.15,2.28,5.83,3.96,1.68,1.68,3,3.62,3.96,5.83.96,2.21,1.44,4.56,1.44,7.05v56.55h20.15c2.3,0,4.44.43,6.4,1.29,1.96.86,3.72,2.04,5.25,3.53,1.53,1.49,2.73,3.24,3.6,5.25.86,2.01,1.29,4.17,1.29,6.47s-.43,4.44-1.29,6.4c-.86,1.97-2.06,3.72-3.6,5.25-1.54,1.54-3.29,2.73-5.25,3.6-1.97.86-4.1,1.29-6.4,1.29h-38.56Z"/>
+      <path fill="#851f20" stroke="#851f20" strokeMiterlimit="10" strokeWidth="2" d="M508.99,142.69h-33.24l-1.44,3.31c-1.63,3.55-4.03,6.38-7.19,8.49-3.17,2.11-6.57,3.17-10.22,3.17-2.11,0-4.22-.38-6.33-1.15-2.11-.77-3.98-1.94-5.61-3.53-1.63-1.58-2.97-3.5-4.03-5.75-1.06-2.25-1.58-4.92-1.58-7.99,0-1.44.14-2.9.43-4.39.29-1.49.77-2.9,1.44-4.25l32.66-69.07c1.92-4.03,4.34-7.31,7.27-9.86,2.92-2.54,6.64-3.81,11.15-3.81s8.37,1.27,11.29,3.81c2.93,2.54,5.35,5.83,7.27,9.86l32.52,69.07c1.34,2.88,2.01,5.76,2.01,8.63,0,1.73-.29,3.65-.86,5.76-.58,2.11-1.56,4.1-2.95,5.97-1.39,1.87-3.21,3.45-5.47,4.75-2.25,1.29-5.06,1.94-8.42,1.94-3.65,0-7.05-1.05-10.22-3.17-3.17-2.11-5.52-4.94-7.05-8.49l-1.44-3.31ZM487.12,116.51h10.36l-5.18-11.94-5.18,11.94Z"/>
+      <path fill="#851f20" stroke="#851f20" strokeMiterlimit="10" strokeWidth="2" d="M614.25,49.45c4.46,1.06,8.63,2.52,12.52,4.39,3.89,1.87,7.41,4.08,10.58,6.62,3.17,2.54,5.85,5.35,8.06,8.42,3.07,4.22,4.6,8.59,4.6,13.09,0,2.01-.41,4.05-1.22,6.12-.82,2.06-1.97,3.91-3.45,5.54-1.49,1.63-3.31,2.95-5.47,3.96-2.16,1.01-4.58,1.51-7.27,1.51s-5.3-.67-7.84-2.01c-2.54-1.34-4.87-3.4-6.98-6.19-1.63-2.21-3.88-4.1-6.76-5.68-2.88-1.58-6.09-2.37-9.64-2.37-2.88,0-5.59.55-8.13,1.66-2.54,1.1-4.75,2.59-6.62,4.46-1.87,1.87-3.36,4.08-4.46,6.62-1.1,2.54-1.65,5.25-1.65,8.13s.55,5.59,1.65,8.13c1.1,2.54,2.59,4.75,4.46,6.62,1.87,1.87,4.08,3.36,6.62,4.46,2.54,1.1,5.25,1.65,8.13,1.65,3.55,0,6.76-.79,9.64-2.37s5.13-3.48,6.76-5.68c2.11-2.78,4.44-4.84,6.98-6.19,2.54-1.34,5.16-2.01,7.84-2.01,1.63,0,3.45.29,5.47.86,2.01.58,3.91,1.54,5.68,2.88,1.77,1.34,3.26,3.09,4.46,5.25,1.2,2.16,1.8,4.82,1.8,7.99,0,2.21-.36,4.41-1.08,6.62-.72,2.21-1.9,4.41-3.53,6.62-2.21,3.07-4.89,5.88-8.06,8.42-3.17,2.54-6.69,4.75-10.58,6.62-3.88,1.87-8.06,3.33-12.52,4.39s-9.14,1.58-14.03,1.58c-7.68,0-14.87-1.46-21.58-4.39-6.72-2.93-12.62-6.91-17.7-11.94-5.08-5.04-9.09-10.96-12.01-17.77-2.93-6.81-4.39-14.05-4.39-21.73s1.46-14.92,4.39-21.73c2.92-6.81,6.93-12.73,12.01-17.77,5.08-5.04,10.98-9.02,17.7-11.94,6.71-2.93,13.91-4.39,21.58-4.39,4.89,0,9.57.53,14.03,1.58Z"/>
+      <path fill="#851f20" stroke="#851f20" strokeMiterlimit="10" strokeWidth="2" d="M697.21,139.24c0,2.59-.48,4.99-1.44,7.19-.96,2.21-2.28,4.15-3.96,5.83-1.68,1.68-3.62,3-5.83,3.96-2.21.96-4.6,1.44-7.2,1.44s-4.87-.48-7.12-1.44c-2.25-.96-4.2-2.28-5.83-3.96-1.63-1.68-2.93-3.62-3.88-5.83-.96-2.21-1.44-4.6-1.44-7.19v-71.23c0-2.49.48-4.84,1.44-7.05.96-2.21,2.25-4.15,3.88-5.83,1.63-1.68,3.57-3,5.83-3.96,2.25-.96,4.63-1.44,7.12-1.44s4.99.48,7.2,1.44c2.21.96,4.15,2.28,5.83,3.96,1.68,1.68,3,3.62,3.96,5.83.96,2.21,1.44,4.56,1.44,7.05v17.99l19.71-28.06c1.92-2.68,4.2-4.72,6.83-6.12,2.64-1.39,5.44-2.09,8.42-2.09,2.4,0,4.7.48,6.91,1.44,2.21.96,4.1,2.23,5.68,3.81,1.58,1.58,2.85,3.48,3.81,5.68.96,2.21,1.44,4.51,1.44,6.91,0,1.92-.29,3.81-.86,5.68-.58,1.87-1.44,3.62-2.59,5.25l-17.56,23.6,22.16,27.48c2.3,2.88,3.45,6.14,3.45,9.79,0,2.5-.48,4.87-1.44,7.12-.96,2.25-2.28,4.2-3.96,5.83-1.68,1.63-3.62,2.93-5.83,3.89-2.21.96-4.56,1.44-7.05,1.44-2.69,0-5.25-.55-7.7-1.65-2.45-1.1-4.53-2.76-6.26-4.96l-25.18-31.66v19.86Z"/>
+      <path fill="#851f20" stroke="#851f20" strokeMiterlimit="10" strokeWidth="2" d="M348.41,139.38c-2.4,4.6-5.61,8.4-9.64,11.37-4.03,2.97-8.68,5.18-13.96,6.62-5.28,1.44-10.75,2.16-16.4,2.16-4.7,0-9.38-.6-14.03-1.8-4.65-1.2-8.83-2.95-12.52-5.25-3.69-2.3-6.69-5.16-8.99-8.56-2.3-3.4-3.45-7.36-3.45-11.87,0-2.97.45-5.51,1.37-7.63.91-2.11,2.09-3.84,3.53-5.18,1.44-1.34,3.09-2.35,4.96-3.02,1.87-.67,3.81-1.01,5.83-1.01,2.21,0,4.41.38,6.62,1.15,2.21.77,4.12,1.92,5.76,3.45,1.44,1.34,2.66,2.47,3.67,3.38,1.01.91,1.96,1.66,2.88,2.23.91.58,1.82.99,2.73,1.22.91.24,2.04.36,3.38.36,1.25,0,2.28-.31,3.09-.94.81-.62,1.22-1.56,1.22-2.81,0-.96-.31-1.8-.94-2.52-.62-.72-1.42-1.37-2.37-1.94-.96-.58-2.01-1.1-3.17-1.58-1.15-.48-2.3-.96-3.45-1.44l-8.78-3.31c-6.91-2.59-12.45-6.28-16.62-11.08-4.17-4.8-6.26-10.98-6.26-18.56,0-5.56,1.03-10.53,3.09-14.89,2.06-4.36,4.87-8.03,8.42-11.01,3.55-2.97,7.75-5.23,12.59-6.76,4.84-1.53,10.09-2.3,15.76-2.3,5.18,0,9.98.6,14.39,1.8,4.41,1.2,8.25,2.83,11.51,4.89,3.26,2.06,5.83,4.53,7.7,7.41,1.87,2.88,2.81,6.04,2.81,9.5,0,2.69-.5,4.96-1.51,6.83-1.01,1.87-2.28,3.41-3.81,4.6-1.54,1.2-3.24,2.09-5.11,2.66-1.87.58-3.72.86-5.54.86-2.59,0-4.8-.53-6.62-1.58-.96-.58-1.99-1.32-3.09-2.23-1.1-.91-2.23-1.77-3.38-2.59-1.15-.81-2.37-1.53-3.67-2.16-1.29-.62-2.66-.94-4.1-.94-1.06,0-2.09.24-3.09.72-1.01.48-1.51,1.25-1.51,2.3,0,1.34.96,2.57,2.88,3.67,1.92,1.1,4.17,2.14,6.76,3.09l11.08,4.17c3.64,1.34,6.93,2.93,9.86,4.75,2.92,1.82,5.4,4.01,7.41,6.55,2.01,2.54,3.57,5.52,4.68,8.92,1.1,3.41,1.66,7.36,1.66,11.87,0,6.33-1.2,11.8-3.6,16.4Z"/>
+    </svg>
+  );
+}
+
+// Mobile hamburger menu icon
+function HamburgerIcon({ open }) {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      {open ? (
+        <>
+          <line x1="6" y1="6" x2="22" y2="22" stroke="#851f20" strokeWidth="2" strokeLinecap="round"/>
+          <line x1="22" y1="6" x2="6" y2="22" stroke="#851f20" strokeWidth="2" strokeLinecap="round"/>
+        </>
+      ) : (
+        <>
+          <line x1="4" y1="8" x2="24" y2="8" stroke="#851f20" strokeWidth="2" strokeLinecap="round"/>
+          <line x1="4" y1="14" x2="24" y2="14" stroke="#851f20" strokeWidth="2" strokeLinecap="round"/>
+          <line x1="4" y1="20" x2="24" y2="20" stroke="#851f20" strokeWidth="2" strokeLinecap="round"/>
+        </>
+      )}
+    </svg>
+  );
+}
+
+// Mobile header
+function MobileHeader({ onMenuToggle, menuOpen, onLogoClick }) {
+  return (
+    <header style={{
+      height:76, background:"#fff", borderBottom:"1.25px solid #a21c26",
+      display:"flex", alignItems:"center", justifyContent:"space-between",
+      padding:"0 20px", flexShrink:0, position:"relative", zIndex:200,
+      boxSizing:"border-box", width:"100%"
+    }}>
+      <div onClick={onLogoClick} style={{ cursor:"pointer", display:"flex", alignItems:"center" }}>
+        <MobileLogoSVG size={44}/>
+      </div>
+      <div onClick={onMenuToggle} style={{ cursor:"pointer", padding:"4px" }}>
+        <HamburgerIcon open={menuOpen}/>
+      </div>
+    </header>
+  );
+}
+
+// Mobile page title
+function MobilePageTitle({ title }) {
+  return (
+    <div style={{
+      fontFamily:"'IBM Plex Mono', monospace", fontSize:32, fontWeight:700,
+      fontStyle:"italic", color:"#851f20", padding:"22px 22px 16px 22px",
+      letterSpacing:0.5
+    }}>{title}</div>
+  );
+}
+
+// Mobile dropdown menu overlay
+function MobileMenu({ onNavigate, currentPage, onClose }) {
+  const items = [
+    { id:"home", label:"Home" },
+    { id:"browse", label:"Browse" },
+    { id:"about", label:"About" },
+    { id:"contact", label:"Contact" },
+  ];
+  return (
+    <div style={{
+      position:"fixed", top:76, left:0, right:0, bottom:0, background:"#fff",
+      zIndex:500, borderTop:"1.25px solid #a21c26",
+      fontFamily:"'IBM Plex Mono', monospace",
+      backgroundImage:"radial-gradient(circle, #ccc 1px, transparent 1px)",
+      backgroundSize:"27px 27px"
+    }}>
+      {items.map((item, i) => (
+        <div key={item.id} onClick={() => { onNavigate(item.id); onClose(); }}
+          style={{
+            borderBottom:"1.25px solid #a21c26",
+            padding:"26px 22px",
+            fontSize:28, fontWeight:700, fontStyle:"italic",
+            color: currentPage === item.id ? "#a21c26" : "#851f20",
+            cursor:"pointer",
+            background: currentPage === item.id ? "rgba(165,28,38,0.06)" : "transparent",
+          }}>
+          {item.label}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Mobile Home page
+function MobileHome({ onNavigate }) {
+  return (
+    <div style={{ flex:1, overflowY:"auto", padding:"30px 22px 40px 22px", fontFamily:"'IBM Plex Mono', monospace" }}>
+      <div style={{ fontSize:13, fontStyle:"italic", color:"#851f20", marginBottom:4 }}>La Slack</div>
+      <div style={{ fontSize:11, fontStyle:"italic", color:"#c97a7a", marginBottom:36, letterSpacing:1 }}>Architecture · Design</div>
+
+      <div style={{ marginBottom:36, borderBottom:"1.25px solid #a21c26", paddingBottom:28 }}>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:2, color:"#c97a7a", marginBottom:12 }}>MOBILE VERSION PENDING</div>
+        <div style={{ fontSize:13, fontStyle:"italic", color:"#851f20", lineHeight:1.9 }}>
+          This portfolio is best experienced on desktop.
+          The full interactive version lives there — draggable windows, image viewers, the real thing.
+        </div>
+      </div>
+
+      <div style={{ marginBottom:32 }}>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:2, color:"#c97a7a", marginBottom:14 }}>IN THE MEANTIME</div>
+        <div onClick={() => onNavigate("browse")} style={{
+          display:"flex", alignItems:"center", justifyContent:"space-between",
+          padding:"16px 18px", border:"1.25px solid #a21c26", borderRadius:2,
+          cursor:"pointer", marginBottom:12, background:"#fff"
+        }}>
+          <span style={{ fontSize:13, fontStyle:"italic", color:"#851f20" }}>Browse projects</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="#851f20" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <a href="https://raw.githubusercontent.com/kselaven-del/portfolio-portfolio.2025/main/SilanKibora2025c..pdf"
+          target="_blank" rel="noopener noreferrer"
+          style={{ textDecoration:"none", display:"block" }}>
+          <div style={{
+            display:"flex", alignItems:"center", justifyContent:"space-between",
+            padding:"16px 18px", border:"1.25px solid #a21c26", borderRadius:2,
+            cursor:"pointer", background:"#fff"
+          }}>
+            <span style={{ fontSize:13, fontStyle:"italic", color:"#851f20" }}>Download PDF portfolio</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3v8M4 7l4 4 4-4" stroke="#851f20" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </a>
+      </div>
+
+      <div style={{ fontSize:11, fontStyle:"italic", color:"#c97a7a", textAlign:"center", marginTop:24 }}>
+        laslack.ch
+      </div>
+    </div>
+  );
+}
+
+// Mobile About page
+function MobileAbout() {
+  const sections = [
+    { label:"EDUCATION", entries:[
+      { org:"EPFL", date:"Lausanne, 2025", desc:"Master with design studios DOORZON and Piovennefabi" },
+      { org:"EPFL", date:"Lausanne, 2022", desc:"Bachelor with studios Assemble, Bakker&Blanc and ALICE" },
+      { org:"GYRE", date:"Renens, 2019", desc:"Bilingual High School Diploma, Mathematics and Physics" },
+    ]},
+    { label:"EXPERIENCE", entries:[
+      { org:"DMA", date:"Paris, 2023", desc:"Project, models, graphic and administrative documents" },
+      { org:"Ferrari Architects", date:"Lausanne, 2023", desc:"Graphic and administrative documents" },
+      { org:"Gérard Fauchère", date:"Evolène, 2023", desc:"Carpentry internship in the Alps" },
+      { org:"Memories Store", date:"Lausanne, 2019–2025", desc:"Collections, events, store layout design" },
+    ]},
+    { label:"LANGUAGES", entries:[
+      { org:"", date:"", desc:"French (MT) · English (fluent) · German (basic)" },
+    ]},
+    { label:"TOOLS", entries:[
+      { org:"Proficient", date:"", desc:"Rhino · Autocad · Photoshop · Illustrator · Indesign" },
+      { org:"Familiar", date:"", desc:"Archicad · Vectorworks · Cinema 4D" },
+    ]},
+  ];
+
+  return (
+    <div style={{ flex:1, overflowY:"auto" }}>
+      <MobilePageTitle title="About"/>
+      <div style={{ padding:"0 22px 40px 22px", fontFamily:"'IBM Plex Mono', monospace" }}>
+        <img src="/images/cv/Silan KIBORA_bw.webp" alt="Silan Kibora"
+          style={{ width:"100%", maxWidth:260, display:"block", marginBottom:22,
+            border:"1.25px solid #a21c26" }}
+          onError={e=>e.target.style.display="none"}/>
+        <div style={{ fontSize:16, fontWeight:700, color:"#851f20", marginBottom:4 }}>Silan KIBORA</div>
+        <div style={{ fontSize:11, color:"#c97a7a", letterSpacing:1.5, marginBottom:32 }}>Architecture · Design</div>
+
+        {sections.map(sec => (
+          <div key={sec.label} style={{ marginBottom:28 }}>
+            <div style={{ fontSize:10, fontWeight:700, letterSpacing:2, color:"#c97a7a", marginBottom:12, borderBottom:"1.25px solid #a21c26", paddingBottom:8 }}>{sec.label}</div>
+            {sec.entries.map((e, i) => (
+              <div key={i} style={{ marginBottom:14 }}>
+                {e.org && <div style={{ fontSize:12, fontWeight:700, color:"#851f20" }}>{e.org}{e.date ? <span style={{ fontWeight:400, color:"#c97a7a", fontSize:10, marginLeft:8 }}>{e.date}</span> : null}</div>}
+                <div style={{ fontSize:12, fontStyle:"italic", color:"#851f20", lineHeight:1.7 }}>{e.desc}</div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Mobile Contact page
+function MobileContact() {
+  const [form, setForm] = useState({ name:"", email:"", message:"" });
+  const [sent, setSent] = useState(false);
+
+  const handleSubmit = () => {
+    if (!form.name || !form.email) return;
+    setSent(true);
+  };
+
+  const inputStyle = {
+    width:"100%", fontFamily:"'IBM Plex Mono', monospace", fontSize:13, color:"#851f20",
+    border:"none", borderBottom:"1.25px solid #a21c26", background:"transparent",
+    outline:"none", padding:"10px 0", boxSizing:"border-box", display:"block"
+  };
+
+  return (
+    <div style={{ flex:1, overflowY:"auto" }}>
+      <MobilePageTitle title="Contact"/>
+      <div style={{ padding:"0 22px 40px 22px", fontFamily:"'IBM Plex Mono', monospace" }}>
+        {sent ? (
+          <div style={{ fontSize:13, fontStyle:"italic", color:"#851f20", padding:"20px 0", lineHeight:1.9 }}>
+            Message sent. I'll get back to you soon.
+          </div>
+        ) : (
+          <>
+            <div style={{ marginBottom:22 }}>
+              <input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))}
+                placeholder="Name" style={inputStyle}/>
+            </div>
+            <div style={{ marginBottom:22 }}>
+              <input value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))}
+                placeholder="Email" type="email" style={inputStyle}/>
+            </div>
+            <div style={{ marginBottom:28 }}>
+              <textarea value={form.message} onChange={e=>setForm(f=>({...f,message:e.target.value}))}
+                placeholder="Message" rows={5}
+                style={{ ...inputStyle, resize:"none", borderBottom:"1.25px solid #a21c26" }}/>
+            </div>
+            <div style={{ display:"flex", justifyContent:"center" }}>
+              <div onClick={handleSubmit} style={{
+                fontFamily:"'IBM Plex Mono', monospace", fontSize:13, fontStyle:"italic",
+                fontWeight:700, color:"#fff", background:"#851f20", border:"none",
+                borderRadius:99, padding:"12px 44px", cursor:"pointer", letterSpacing:1
+              }}>Send</div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Mobile Browse page - category list
+function MobileBrowse({ onSelectCategory }) {
+  const categories = [
+    { id:"architecture", label:"Architecture", count: Object.values(FOLDERS.architecture.sub||[]).length },
+    { id:"graphicdesign", label:"Graphic design", count: Object.values(FOLDERS.graphicdesign.sub||[]).length },
+    { id:"objects", label:"Objects", count: Object.values(FOLDERS.objects.sub||[]).length },
+    { id:"dump", label:"Dump", count: null },
+  ];
+
+  return (
+    <div style={{ flex:1, overflowY:"auto" }}>
+      <MobilePageTitle title="Browse"/>
+      <div style={{ fontFamily:"'IBM Plex Mono', monospace" }}>
+        {categories.map((cat, i) => (
+          <div key={cat.id} onClick={() => onSelectCategory(cat.id)}
+            style={{
+              display:"flex", alignItems:"center", justifyContent:"space-between",
+              padding:"22px 22px", borderBottom:"1.25px solid #a21c26",
+              cursor:"pointer"
+            }}>
+            <div>
+              <div style={{ fontSize:18, fontStyle:"italic", fontWeight:700, color:"#851f20", marginBottom:3 }}>{cat.label}</div>
+              {cat.count !== null && <div style={{ fontSize:10, color:"#c97a7a", letterSpacing:1 }}>{cat.count} projects</div>}
+            </div>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="#851f20" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Mobile Projects page - 2-col grid of folders
+function MobileProjects({ categoryId, onBack, onOpenProject }) {
+  const folder = FOLDERS[categoryId];
+  const subs = folder?.sub || [];
+  const isTwoCol = true;
+
+  return (
+    <div style={{ flex:1, overflowY:"auto" }}>
+      <div style={{ display:"flex", alignItems:"center", padding:"14px 22px 0 22px", fontFamily:"'IBM Plex Mono', monospace" }}>
+        <div onClick={onBack} style={{ display:"flex", alignItems:"center", gap:6, cursor:"pointer", color:"#c97a7a", fontSize:11 }}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M11 7H3M7 3L3 7l4 4" stroke="#c97a7a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Browse
+        </div>
+      </div>
+      <MobilePageTitle title={folder?.label || categoryId}/>
+      <div style={{
+        display:"grid", gridTemplateColumns:"1fr 1fr",
+        gap:"0px", padding:"0 18px 40px 18px",
+        fontFamily:"'IBM Plex Mono', monospace"
+      }}>
+        {subs.map(sub => (
+          <div key={sub.id} onClick={() => onOpenProject(categoryId, sub.id, sub.name)}
+            style={{ display:"flex", flexDirection:"column", alignItems:"center", padding:"14px 8px", cursor:"pointer" }}>
+            <div style={{ width:"100%", aspectRatio:"4/3", display:"flex", alignItems:"center", justifyContent:"center" }}>
+              <FolderSVG w="100%" h="100%" sw={2}/>
+            </div>
+            <div style={{ fontSize:11, fontStyle:"italic", color:"#851f20", textAlign:"center", marginTop:8, lineHeight:1.4, width:"100%" }}>
+              {sub.name}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Mobile Project viewer — scrollable image grid
+function MobileProjectView({ categoryId, projectId, projectName, onBack }) {
+  const proj = getProj(projectId);
+  const imgFiles = proj.files.filter(f => ["JPG","JPEG","PNG"].includes(f.ext.toUpperCase()));
+  const [lightbox, setLightbox] = useState(null);
+
+  const navigate = (dir) => {
+    setLightbox(l => {
+      const newIdx = (l + dir + imgFiles.length) % imgFiles.length;
+      return newIdx;
+    });
+  };
+
+  return (
+    <div style={{ flex:1, overflowY:"auto", position:"relative" }}>
+      <div style={{ display:"flex", alignItems:"center", padding:"14px 22px 0 22px", fontFamily:"'IBM Plex Mono', monospace" }}>
+        <div onClick={onBack} style={{ display:"flex", alignItems:"center", gap:6, cursor:"pointer", color:"#c97a7a", fontSize:11 }}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M11 7H3M7 3L3 7l4 4" stroke="#c97a7a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          {FOLDERS[categoryId]?.label || "Back"}
+        </div>
+      </div>
+      <MobilePageTitle title={projectName}/>
+
+      {/* Description */}
+      {DESCRIPTIONS[projectId] && (
+        <div style={{ padding:"0 22px 24px 22px", fontFamily:"'IBM Plex Mono', monospace", fontSize:11, fontStyle:"italic", color:"#851f20", lineHeight:1.8, borderBottom:"1.25px solid #a21c26", marginBottom:16 }}>
+          {DESCRIPTIONS[projectId].split("\n\n").slice(1).join("\n\n").slice(0, 400) + (DESCRIPTIONS[projectId].length > 400 ? "…" : "")}
+        </div>
+      )}
+
+      {/* Image grid */}
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"2px", padding:"0 0 40px 0" }}>
+        {imgFiles.map((f, i) => {
+          const src = getImageSrc(f.name);
+          if (!src) return null;
+          return (
+            <div key={i} onClick={() => setLightbox(i)}
+              style={{ aspectRatio:"1", overflow:"hidden", cursor:"pointer", background:"#f5f4f4" }}>
+              <img src={src} alt={f.name}
+                style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }}
+                onError={e=>e.target.parentNode.style.display="none"}/>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Lightbox */}
+      {lightbox !== null && (
+        <div style={{
+          position:"fixed", inset:0, background:"rgba(255,255,255,0.97)", zIndex:9999,
+          display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"
+        }} onClick={() => setLightbox(null)}>
+          <div onClick={e=>e.stopPropagation()} style={{ width:"100%", height:"100%", display:"flex", flexDirection:"column" }}>
+            {/* Lightbox bar */}
+            <div style={{
+              height:50, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"space-between",
+              padding:"0 18px", borderBottom:"1.25px solid #a21c26"
+            }}>
+              <div style={{ fontFamily:"'IBM Plex Mono', monospace", fontSize:11, fontStyle:"italic", color:"#c97a7a" }}>
+                {lightbox+1} / {imgFiles.length}
+              </div>
+              <div onClick={() => setLightbox(null)} style={{ cursor:"pointer", padding:4 }}>
+                <svg viewBox="0 0 22 22" width="18" height="18">
+                  <rect x=".5" y=".5" width="21" height="21" fill="#fff" stroke="#a21c26" strokeWidth="1.8"/>
+                  <line x1="7.15" y1="14.85" x2="14.85" y2="7.15" stroke="#a21c26" strokeWidth="1.8"/>
+                  <line x1="7.15" y1="7.15" x2="14.85" y2="14.85" stroke="#a21c26" strokeWidth="1.8"/>
+                </svg>
+              </div>
+            </div>
+            {/* Image */}
+            <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", position:"relative" }}>
+              <img src={getImageSrc(imgFiles[lightbox].name)} alt=""
+                style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", display:"block" }}/>
+            </div>
+            {/* Nav */}
+            <div style={{
+              height:56, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"space-between",
+              padding:"0 18px", borderTop:"1.25px solid #a21c26"
+            }}>
+              <div onClick={e=>{e.stopPropagation();navigate(-1);}} style={{ cursor:"pointer", padding:"8px 16px", fontFamily:"'IBM Plex Mono', monospace", fontSize:11, fontStyle:"italic", color:"#851f20" }}>← prev</div>
+              <div style={{ fontFamily:"'IBM Plex Mono', monospace", fontSize:11, fontStyle:"italic", color:"#c97a7a" }}>{imgFiles[lightbox].name.split(".")[0]}</div>
+              <div onClick={e=>{e.stopPropagation();navigate(1);}} style={{ cursor:"pointer", padding:"8px 16px", fontFamily:"'IBM Plex Mono', monospace", fontSize:11, fontStyle:"italic", color:"#851f20" }}>next →</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MobileApp() {
+  const [page, setPage] = useState("home"); // home | about | contact | browse | projects | project
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null); // { categoryId, projectId, projectName }
+
+  const navigate = (p) => {
+    setPage(p);
+    setMenuOpen(false);
+    setSelectedCategory(null);
+    setSelectedProject(null);
+  };
+
+  const selectCategory = (catId) => {
+    setSelectedCategory(catId);
+    setPage("projects");
+  };
+
+  const openProject = (categoryId, projectId, projectName) => {
+    setSelectedProject({ categoryId, projectId, projectName });
+    setPage("project");
+  };
+
+  const goBackToCategories = () => {
+    setSelectedProject(null);
+    setPage("projects");
+  };
+
+  const goBackToBrowse = () => {
+    setSelectedCategory(null);
+    setPage("browse");
+  };
+
+  return (
+    <div style={{
+      width:"100%", height:"100vh", overflow:"hidden", background:"#fff",
+      display:"flex", flexDirection:"column", position:"relative",
+      fontFamily:"'IBM Plex Mono', monospace"
+    }}>
+      <style>{`
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        input, textarea { -webkit-appearance: none; border-radius: 0; }
+        input::placeholder, textarea::placeholder { color: #c97a7a; font-style: italic; }
+      `}</style>
+      <MobileDotBg/>
+
+      <MobileHeader
+        onMenuToggle={() => setMenuOpen(o => !o)}
+        menuOpen={menuOpen}
+        onLogoClick={() => navigate("home")}
+      />
+
+      {menuOpen && (
+        <MobileMenu onNavigate={navigate} currentPage={page} onClose={() => setMenuOpen(false)}/>
+      )}
+
+      <div style={{ flex:1, overflowY:"auto", position:"relative", zIndex:1, display:"flex", flexDirection:"column" }}>
+        {page === "home" && <MobileHome onNavigate={navigate}/>}
+        {page === "about" && <MobileAbout/>}
+        {page === "contact" && <MobileContact/>}
+        {page === "browse" && <MobileBrowse onSelectCategory={selectCategory}/>}
+        {page === "projects" && selectedCategory && (
+          <MobileProjects categoryId={selectedCategory} onBack={goBackToBrowse} onOpenProject={openProject}/>
+        )}
+        {page === "project" && selectedProject && (
+          <MobileProjectView
+            categoryId={selectedProject.categoryId}
+            projectId={selectedProject.projectId}
+            projectName={selectedProject.projectName}
+            onBack={goBackToCategories}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── ROOT: detect mobile vs desktop ─────────────────────────────────────────
+function Root() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  return isMobile ? <MobileApp /> : <App />;
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(<Root />);
 </script>
 </body>
 </html>
