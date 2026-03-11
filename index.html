@@ -690,7 +690,12 @@ function App() {
             <div style={{...S.deskLabel, fontSize:20}}>Portfolio.2025</div>
           </div>
 
-
+          {windows.length > 0 && (
+            <div onClick={() => { setWindows([]); setFs(null); }} style={{ position:"absolute", left:"50%", bottom:24, transform:"translateX(-50%)", zIndex:1, cursor:"pointer", fontFamily:"'IBM Plex Mono', monospace", fontSize:16, fontStyle:"italic", fontWeight:400, color:"#851f20", border:"1.6px solid #851f20", padding:"7px 21px", background:"#ffe600", borderRadius:99, letterSpacing:0.5, display:"flex", alignItems:"center", gap:9, whiteSpace:"nowrap", userSelect:"none" }}>
+              <svg width="15" height="15" viewBox="0 0 22 22"><line x1="4" y1="4" x2="18" y2="18" stroke="#851f20" strokeWidth="2" strokeLinecap="round"/><line x1="18" y1="4" x2="4" y2="18" stroke="#851f20" strokeWidth="2" strokeLinecap="round"/></svg>
+              Clear all
+            </div>
+          )}
 
           {windows.map(win => {
             const folder = FOLDERS[win.folderId] || {};
