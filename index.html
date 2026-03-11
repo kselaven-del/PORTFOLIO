@@ -937,9 +937,9 @@ function MobileHome({ onNavigate }) {
     <div style={{ flex:1, display:"flex", flexDirection:"column", justifyContent:"space-evenly", padding:"0 0 36px 0", marginTop:"-85px", position:"relative", overflow:"hidden" }}>
 
       {/* SVG 13 — "Mobile version pending / or grab the PDF" */}
-      <a href="https://raw.githubusercontent.com/kselaven-del/portfolio-portfolio.2025/main/SilanKibora2025c..pdf" target="_blank" rel="noreferrer" style={{ display:"block", width:"67%", marginRight:"auto", textDecoration:"none", cursor:"pointer" }}>
-      <div style={{ width:"100%", pointerEvents:"none" }}>
-        <svg viewBox="30 145 760 240" style={{ width:"100%", display:"block", pointerEvents:"none" }}>
+      <div onClick={() => window.open("https://raw.githubusercontent.com/kselaven-del/portfolio-portfolio.2025/main/SilanKibora2025c..pdf", "_blank")} style={{ display:"block", width:"67%", marginRight:"auto", cursor:"pointer" }}>
+      <div style={{ width:"100%" }}>
+        <svg viewBox="30 145 760 240" style={{ width:"100%", display:"block" }}>
           
   <g>
     <path  fill="#851f21" d="M108.64,204.3l3.04-17.92h-.56l-16.88,28.8-7.12-28.8h-.56l-2.96,17.92-4.64,28h-6l9.36-55.84h8l5.92,24.72h.48l14.16-24.72h8.4l-9.36,55.84h-6l4.72-28Z"/>
@@ -970,7 +970,7 @@ function MobileHome({ onNavigate }) {
   </g>
         </svg>
       </div>
-      </a>
+      </div>
 
       {/* SVG 14 — Laptop + "Hop on a laptop for the real thing" */}
       <div style={{ width:"67%", marginLeft:"auto" }}>
