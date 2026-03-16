@@ -324,13 +324,15 @@ function ViewerWindow({ win, closeWindow, bringToFront, openDossier, openProjet,
     e.preventDefault();
     bringToFront(win.id);
     const startX = e.clientX - pos.left, startY = e.clientY - pos.top;
-    const onMove = ev => setPos({ left: Math.min(Math.max(0, ev.clientX - startX), vw - sizeRef.current.w - 4), top: Math.min(Math.max(0, ev.clientY - startY), vh - sizeRef.current.h - 4) });
+    let dragged = false;
+    const onMove = ev => { dragged = true; setPos({ left: Math.min(Math.max(0, ev.clientX - startX), vw - sizeRef.current.w - 4), top: Math.min(Math.max(0, ev.clientY - startY), vh - sizeRef.current.h - 4) }); };
     const onUp = e => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
-      // block the click that fires after mouseup from bubbling to desktop
-      const blockClick = ev => { ev.stopPropagation(); window.removeEventListener("click", blockClick, true); };
-      window.addEventListener("click", blockClick, true);
+      if (dragged) {
+        const blockClick = ev => { ev.stopPropagation(); window.removeEventListener("click", blockClick, true); };
+        window.addEventListener("click", blockClick, true);
+      }
     };
     window.addEventListener("mousemove", onMove); window.addEventListener("mouseup", onUp);
   };
@@ -339,7 +341,9 @@ function ViewerWindow({ win, closeWindow, bringToFront, openDossier, openProjet,
   const onResizeMouseDown = e => {
     e.stopPropagation(); e.preventDefault();
     const startX = e.clientX, startY = e.clientY, startW = size.w, startH = size.h;
+    let dragged = false;
     const onMove = ev => {
+      dragged = true;
       const ratio = imgRatio.current;
       const dw = ev.clientX - startX, dh = ev.clientY - startY;
       if (ratio) {
@@ -357,7 +361,14 @@ function ViewerWindow({ win, closeWindow, bringToFront, openDossier, openProjet,
         setSize({ w: Math.max(220, startW + dw), h: Math.max(180, startH + dh), _userResized: true });
       }
     };
-    const onUp = () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      if (dragged) {
+        const blockClick = ev => { ev.stopPropagation(); window.removeEventListener("click", blockClick, true); };
+        window.addEventListener("click", blockClick, true);
+      }
+    };
     window.addEventListener("mousemove", onMove); window.addEventListener("mouseup", onUp);
   };
 
