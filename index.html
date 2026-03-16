@@ -192,19 +192,34 @@ function Window({ title, style, onClose, onExpand, breadcrumb, children, onMouse
   const ref = useRef(null);
   const scrollRef = useRef(null);
   const drag = useRef(null);
-  const [pos, setPos] = useState({ left: style.left, top: style.top, width: style.width, height: style.height });
+  const parseNum = v => typeof v === "string" ? parseInt(v, 10) : (v || 0);
+  const [pos, setPos] = useState({ left: parseNum(style.left), top: parseNum(style.top), width: style.width, height: style.height });
 
   const onMouseDown = useCallback(e => {
     if (e.target.closest("[data-btn]")) return;
     e.preventDefault();
     const r = ref.current.getBoundingClientRect();
-    drag.current = { ox: e.clientX - r.left, oy: e.clientY - r.top };
+    const pr = ref.current.offsetParent ? ref.current.offsetParent.getBoundingClientRect() : { left: 0, top: 0 };
+    drag.current = { ox: e.clientX - (r.left - pr.left), oy: e.clientY - (r.top - pr.top), moved: false };
     document.body.style.userSelect = "none";
   }, []);
 
   useEffect(() => {
-    const onMove = e => { if (!drag.current) return; setPos(p => ({ ...p, left: Math.max(0, e.clientX - drag.current.ox), top: Math.max(0, e.clientY - drag.current.oy) })); };
-    const onUp = () => { drag.current = null; document.body.style.userSelect = ""; };
+    const onMove = e => {
+      if (!drag.current) return;
+      drag.current.moved = true;
+      setPos(p => ({ ...p, left: Math.max(0, e.clientX - drag.current.ox), top: Math.max(0, e.clientY - drag.current.oy) }));
+    };
+    const onUp = () => {
+      if (!drag.current) return;
+      const moved = drag.current.moved;
+      drag.current = null;
+      document.body.style.userSelect = "";
+      if (moved) {
+        const blockClick = ev => { ev.stopPropagation(); window.removeEventListener("click", blockClick, true); };
+        window.addEventListener("click", blockClick, true);
+      }
+    };
     window.addEventListener("mousemove", onMove); window.addEventListener("mouseup", onUp);
     return () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
   }, []);
@@ -364,10 +379,8 @@ function ViewerWindow({ win, closeWindow, bringToFront, openDossier, openProjet,
     const onUp = () => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
-      if (dragged) {
-        const blockClick = ev => { ev.stopPropagation(); window.removeEventListener("click", blockClick, true); };
-        window.addEventListener("click", blockClick, true);
-      }
+      const blockClick = ev => { ev.stopPropagation(); window.removeEventListener("click", blockClick, true); };
+      window.addEventListener("click", blockClick, true);
     };
     window.addEventListener("mousemove", onMove); window.addEventListener("mouseup", onUp);
   };
