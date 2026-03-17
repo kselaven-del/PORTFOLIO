@@ -705,7 +705,7 @@ function App() {
           <DotBg data-dotbg="1"/>
 
           {folderHover && (
-            <div style={{ position:"fixed", left:folderHover.x+18, top:folderHover.y-10, width:150, pointerEvents:"none", zIndex:2147483646, border:"1.25px solid #a21c26", background:"#fff", overflow:"hidden" }}>
+            <div style={{ position:"fixed", left:folderHover.x+18, top:folderHover.y-10, width:150, pointerEvents:"none", zIndex:2147483646, background:"#fff", overflow:"hidden" }}>
               <img src={folderHover.src} style={{ width:"100%", height:150, objectFit:"cover", display:"block" }}/>
             </div>
           )}
@@ -713,21 +713,10 @@ function App() {
             const pos = [{ left:"40px", top:"20px" }, { left:"344px", top:"20px" }, { left:"648px", top:"20px" }];
             const labels = ["Architecture","Objects","Graphic design"];
             const dimmed = windows.length > 0;
-            const previewSrc = (() => {
-              const sub = FOLDERS[fid]?.sub;
-              if (!sub?.length) return null;
-              for (const s of sub) {
-                const proj = PROJECTS[s.id];
-                const f = proj?.files?.find(f => f.ext !== "TXT");
-                if (f) return imgCache.current[s.id] || getImageSrc(f.name);
-              }
-              return null;
-            })();
             return (
               <div key={fid} onClick={dimmed?undefined:()=>openDossier(fid)} style={{ ...S.deskIcon, ...pos[i], opacity:dimmed?0.18:1, pointerEvents:dimmed?"none":"auto", zIndex:3-i }}
-                onMouseEnter={e=>{ if(!dimmed) { e.currentTarget.querySelector("svg").style.transform="translateY(-6px)"; if(previewSrc) setFolderHover({ x:e.clientX, y:e.clientY, src:previewSrc }); } }}
-                onMouseMove={e=>{ if(folderHover) setFolderHover(h => h ? { ...h, x:e.clientX, y:e.clientY } : null); }}
-                onMouseLeave={e=>{ if(!dimmed) e.currentTarget.querySelector("svg").style.transform="none"; setFolderHover(null); }}>
+                onMouseEnter={e=>{ if(!dimmed) e.currentTarget.querySelector("svg").style.transform="translateY(-6px)"; }}
+                onMouseLeave={e=>{ if(!dimmed) e.currentTarget.querySelector("svg").style.transform="none"; }}>
                 <FolderSVG w={264} h={197} sw={2}/>
                 <div style={{...S.deskLabel, fontSize:20}}>{labels[i]}</div>
               </div>
@@ -766,16 +755,20 @@ function App() {
               return (
                 <Window key={win.id} title={folder.label} style={{ left:"18px", top:"14px", width:"576px", height:"406px", zIndex:win.zIndex }} onClose={()=>closeWindow(win.id)} onMouseDownCapture={()=>bringToFront(win.id)} breadcrumb={<Breadcrumb parts={[{label:"Bureau",onClick:()=>setWindows([])},{label:folder.label}]}/>}>
                     <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 165px)", columnGap:16, rowGap:9, marginTop:-1, justifyContent:"center", paddingBottom:0, paddingLeft:30, paddingRight:24, boxSizing:"border-box", width:"100%" }}>
-                      {(folder.sub||[]).map(sub => (
+                      {(folder.sub||[]).map(sub => {
+                        const pSrc = (() => { const proj = PROJECTS[sub.id]; const f = proj?.files?.find(f=>f.ext!=="TXT"); return f ? (imgCache.current[sub.id]||getImageSrc(f.name)) : null; })();
+                        return (
                         <div key={sub.id} onClick={()=>openProjet(win.folderId,sub.id,sub.name)} style={{ display:"flex", flexDirection:"column", alignItems:"center", cursor:"pointer" }}
-                          onMouseEnter={e=>e.currentTarget.querySelector("svg").style.transform="translateY(-3px)"}
-                          onMouseLeave={e=>e.currentTarget.querySelector("svg").style.transform="none"}>
+                          onMouseEnter={e=>{ e.currentTarget.querySelector("svg").style.transform="translateY(-3px)"; if(pSrc) setFolderHover({ x:e.clientX, y:e.clientY, src:pSrc }); }}
+                          onMouseMove={e=>{ if(folderHover) setFolderHover(h=>h?{...h,x:e.clientX,y:e.clientY}:null); }}
+                          onMouseLeave={e=>{ e.currentTarget.querySelector("svg").style.transform="none"; setFolderHover(null); }}>
                           <div style={{ width:165, height:133, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                             <FolderSVG w={165} h={133}/>
                           </div>
                           <div style={{ ...S.deskLabel, fontSize:11, marginTop:4, lineHeight:1.3, height:"28px", overflow:"hidden", width:"165px", textAlign:"center", whiteSpace:"normal", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>{sub.name}</div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                 </Window>
               );
