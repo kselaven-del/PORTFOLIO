@@ -538,6 +538,8 @@ function App() {
   const [cvOpen, setCvOpen] = useState(new Set());
   const [cvZ, setCvZ] = useState(50000);
   const [cvSkY, setCvSkY] = useState(600);
+  const [folderHover, setFolderHover] = useState(null);
+  const imgCache = useRef({});
 
   const bringToFront = id => {
     nextZ = Math.max(nextZ, cvZ) + 1;
@@ -548,6 +550,31 @@ function App() {
     const closing = ws.find(w => w.id === id);
     return ws.filter(w => { if (w.id === id) return false; if (closing?.type==="projet" && w.type==="texte" && w.projId===closing.projId) return false; return true; });
   });
+
+  // Preload first image of every project on mount
+  useEffect(() => {
+    const toPreload = [];
+    ["architecture","objects","graphicdesign"].forEach(fid => {
+      const folder = FOLDERS[fid];
+      if (!folder?.sub?.length) return;
+      const sub = folder.sub;
+      for (const s of sub) {
+        const proj = PROJECTS[s.id];
+        const f = proj?.files?.find(f => f.ext !== "TXT");
+        if (f) { toPreload.push({ key: fid + "_" + s.id, src: getImageSrc(f.name) }); break; }
+      }
+    });
+    Object.entries(PROJECTS).forEach(([id, proj]) => {
+      const f = proj.files?.find(f => f.ext !== "TXT");
+      if (f) toPreload.push({ key: id, src: getImageSrc(f.name) });
+    });
+    toPreload.forEach(({ key, src }) => {
+      if (imgCache.current[key]) return;
+      const img = new Image();
+      img.src = src;
+      imgCache.current[key] = src;
+    });
+  }, []);
 
   const openDossier = folderId => {
     setCvOpen(new Set());
@@ -677,14 +704,30 @@ function App() {
         <div style={{ flex:1, position:"relative", overflow:"hidden" }} onClick={e=>{ if(e.target===e.currentTarget||e.target.dataset?.dotbg) { setWindows([]); setFs(null); setCvOpen(new Set()); } }}>
           <DotBg data-dotbg="1"/>
 
+          {folderHover && (
+            <div style={{ position:"fixed", left:folderHover.x+18, top:folderHover.y-10, width:150, pointerEvents:"none", zIndex:2147483646, border:"1.25px solid #a21c26", background:"#fff", overflow:"hidden" }}>
+              <img src={folderHover.src} style={{ width:"100%", height:150, objectFit:"cover", display:"block" }}/>
+            </div>
+          )}
           {["architecture","objects","graphicdesign"].map((fid, i) => {
             const pos = [{ left:"40px", top:"20px" }, { left:"344px", top:"20px" }, { left:"648px", top:"20px" }];
             const labels = ["Architecture","Objects","Graphic design"];
             const dimmed = windows.length > 0;
+            const previewSrc = (() => {
+              const sub = FOLDERS[fid]?.sub;
+              if (!sub?.length) return null;
+              for (const s of sub) {
+                const proj = PROJECTS[s.id];
+                const f = proj?.files?.find(f => f.ext !== "TXT");
+                if (f) return imgCache.current[s.id] || getImageSrc(f.name);
+              }
+              return null;
+            })();
             return (
               <div key={fid} onClick={dimmed?undefined:()=>openDossier(fid)} style={{ ...S.deskIcon, ...pos[i], opacity:dimmed?0.18:1, pointerEvents:dimmed?"none":"auto", zIndex:3-i }}
-                onMouseEnter={e=>{ if(!dimmed) e.currentTarget.querySelector("svg").style.transform="translateY(-6px)"; }}
-                onMouseLeave={e=>{ if(!dimmed) e.currentTarget.querySelector("svg").style.transform="none"; }}>
+                onMouseEnter={e=>{ if(!dimmed) { e.currentTarget.querySelector("svg").style.transform="translateY(-6px)"; if(previewSrc) setFolderHover({ x:e.clientX, y:e.clientY, src:previewSrc }); } }}
+                onMouseMove={e=>{ if(folderHover) setFolderHover(h => h ? { ...h, x:e.clientX, y:e.clientY } : null); }}
+                onMouseLeave={e=>{ if(!dimmed) e.currentTarget.querySelector("svg").style.transform="none"; setFolderHover(null); }}>
                 <FolderSVG w={264} h={197} sw={2}/>
                 <div style={{...S.deskLabel, fontSize:20}}>{labels[i]}</div>
               </div>
